@@ -31,6 +31,7 @@ def main():
     plt.legend()
     ax = plt.gca()
     ax.set_ylim(0,1.5)
+    #plt.savefig('one_b.png')
     plt.show()
 
 if __name__=="__main__":

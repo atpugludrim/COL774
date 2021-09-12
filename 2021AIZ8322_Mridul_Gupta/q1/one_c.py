@@ -59,7 +59,7 @@ def main():
         fig.canvas.draw()
         fig.canvas.flush_events()
         #plt.savefig("framessurf/{:0>5d}.png".format(t))
-        time.sleep(0.01)
+        time.sleep(0.001)
     plt.show()
 
 if __name__=="__main__":

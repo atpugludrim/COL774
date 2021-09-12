@@ -22,7 +22,7 @@ class Scaler:
             mean += x/n
             var += np.multiply(x,x)/(n-1)
 
-        var = var - mean*(n-1)/n
+        var = var - mean*mean*n/(n-1)
         this.mu = mean
         this.sig_sq = var
 

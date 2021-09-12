@@ -57,10 +57,7 @@ gradient descent and combined it with the data loading step.
 \item After all the debugging was done, I rewrote the code using
 \texttt{dataloader} style syntax to make working easier. The
 inspiration was pytorch code I worked on before.
-\item I initialized the parameters to \([0,0]\), but the graphs showed
-little movement of parameters on the space, to get a dramatic
-graph, I made the initialization point far from the actual
-values of \([0,1]\).
+\item I initialized the parameters to \([0,0]\).
 \item I also experimented with different number of epochs, learning
 rates and convergence criteria. Early on, I was using the
 convergence of \(\theta^t\) to an epsilon-ball \(\mathbb{B}_{\epsilon}\)
@@ -69,7 +66,7 @@ convergence of the cost function values over time as convergence criterion.
 \end{enumerate}
 Learning Rate: 0.001\\
 Stopping criteria: \(\lVert J^{t}-J^{t-1}\rVert_2 < 10^{-6}\)\\
-Final parameter values: \(\theta_0=0.96503917\) and \(\theta_1=0.0226594\)
+Final parameter values: \(\theta_0=0.96503633\) and \(\theta_1=0.00130276\)
 \subsection{Q1(b)}
 \label{sec:org2e4e985}
 \begin{codebox}
@@ -106,7 +103,7 @@ and the final epoch snapshots. See figure \ref{fig:org1c0d57c}-\ref{fig:orgc4a9d
 \end{figure}
 \begin{figure}[!ht]
 \centering
-\includegraphics[width=.8\linewidth]{/home/mridul/scai/ml/hw1/src/q1/framessurf/03453.png}
+\includegraphics[width=.8\linewidth]{/home/mridul/scai/ml/hw1/src/q1/framessurf/03449.png}
 \caption{\label{fig:orgc4a9d5e}Last epoch}
 \end{figure}
 \afterpage{\clearpage}
@@ -445,9 +442,9 @@ make the inverse stable.
 \subsubsection{The \(\theta\) parameter values:}
 \label{sec:org3f62dae}
 \begin{align*}
-\theta_0 &=1695.99615911\\
-\theta_1 &=972.11908322\\
-\theta_2 &=-1317.79463404
+\theta_0 &=73.41152084\\
+\theta_1 &=215.9852777\\
+\theta_2 &=-223.87490138
 \end{align*}
 \subsection{Q3(b)}
 \label{sec:orgeaf4eb5}
@@ -484,24 +481,24 @@ The values of the parameters found are:
 \begin{equation*}
 \mu_0 = \;
 \begin{bmatrix}
--0.16168709\\
-0.07834578
+-0.75150837\\
+0.68166023
 \end{bmatrix}
 \end{equation*}
 
 \begin{equation*}
 \mu_1 = \;
 \begin{bmatrix}
-0.16168709\\
--0.07834578
+0.75150837\\
+-0.68166023
 \end{bmatrix}
 \end{equation*}
 
 \begin{equation*}
 \Sigma = \;
 \begin{bmatrix}
-0.01968395& -0.00055014\\
--0.00055014&  0.00693961
+0.42523517& -0.02224756\\
+-0.02224756&  0.52533933
 \end{bmatrix}
 \end{equation*}
 \subsection{Q4(b)}
@@ -538,7 +535,7 @@ Equation of the linear decision boundary is:
 \end{equation*}
 With the values of the parameters in place and with \(x=[x_1\; x_2]^T\):
 \begin{equation}
-0=-6.39488462\times10^{-13}-1583.23388368x_1+2132.41855595x_2
+0=-6.43929354\times10^{-15}-3.40633x_1+2.45087x_2
 \end{equation}
 \subsection{Q4(d)}
 \label{sec:org1f9433b}
@@ -553,32 +550,32 @@ The values of the parameters obtained are
 \begin{equation*}
 \mu_0 = \;
 \begin{bmatrix}
--0.16168709\\
-0.07834578
+-0.75150837\\
+0.68166023
 \end{bmatrix}
 \end{equation*}
 
 \begin{equation*}
 \mu_1 = \;
 \begin{bmatrix}
-0.16168709\\
--0.07834578
+0.75150837\\
+-0.68166023
 \end{bmatrix}
 \end{equation*}
 
 \begin{equation*}
 \Sigma_0 = \;
 \begin{bmatrix}
-0.01748699& -0.00379121\\
--0.00379121&  0.0084709
+0.37777389& -0.15331651\\
+-0.15331651&  0.6412598
 \end{bmatrix}
 \end{equation*}
 
 \begin{equation*}
 \Sigma_1 = \;
 \begin{bmatrix}
-0.02188091& 0.00269094\\
-0.00269094& 0.00540833
+0.47269646& 0.10882139\\
+0.10882139& 0.40941887
 \end{bmatrix}
 \end{equation*}
 \subsection{Q4(e)}
@@ -597,7 +594,7 @@ path/to/q4y.dat [-scale]
 \end{figure}
 The equation of the decision boundary with parameter values substituted is:
 \begin{equation*}
--3310.73x_2^2 + 732.49x_1^2 + 5256.53x_1x_2 - 2500.63x_2 + 1778.77x_1 - 67.57 =0
+-0.8746x_2^2 + 0.67812x_1^2 + 2.5996x_1x_2 + 5.748x_2 - -7.654x_1 - 1.1695739 =0
 \end{equation*}
 \par
 To get the equation of the decision boundary when
