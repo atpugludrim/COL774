@@ -58,9 +58,9 @@ def four_a(x, y):
     indicator_1 = np.repeat(y,2).reshape((y.shape[0],-1))
     mu1 = np.add.reduce(np.multiply(indicator_1,x/m1),axis=0)
 
-    z0 = np.multiply(indicator_0,(x-mu0)/len(y))
+    z0 = np.multiply(indicator_0,(x-mu0)/np.sqrt(len(y)))
     sig0 = z0.T@z0
-    z1 = np.multiply(indicator_1,(x-mu1)/len(y))
+    z1 = np.multiply(indicator_1,(x-mu1)/np.sqrt(len(y)))
     sig1 = z1.T@z1
 
     sig = sig0+sig1

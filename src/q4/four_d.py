@@ -15,9 +15,9 @@ def four_d(x, y):
     indicator_1 = np.repeat(y,2).reshape((y.shape[0],-1))
     mu1 = np.add.reduce(np.multiply(indicator_1,x/m1),axis=0)
 
-    z0 = np.multiply(indicator_0,(x-mu0)/m0)
+    z0 = np.multiply(indicator_0,(x-mu0)/np.sqrt(m0))
     sig0 = z0.T@z0
-    z1 = np.multiply(indicator_1,(x-mu1)/m1)
+    z1 = np.multiply(indicator_1,(x-mu1)/np.sqrt(m1))
     sig1 = z1.T@z1
 
     return {'phi':phi, 'mu0':mu0, 'sig0':sig0, 'mu1':mu1, 'sig1':sig1}
