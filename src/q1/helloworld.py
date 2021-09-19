@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 import matplotlib.pyplot as plt
 with open('/home/mridul/scai/ml/hw1/data/q1/linearX.csv','r') as f:
     _x = f.readlines()
@@ -19,11 +19,11 @@ for i,j in zip(_x,_y):
 
 fig, ax = plt.subplots(1,2,figsize=(10,5))
 ax[0].plot(x,y,'C0o',markersize=2)
-var = (var - mean)/(n-1)
+var = (var - mean*mean/(n-1))/(n-1)
 mean = mean/n
 
 for i in range(len(x)):
-    x[i] = (x[i]-mean)/var
+    x[i] = (x[i]-mean)/np.sqrt(var)
 
 ax[1].plot(x,y,'C1o',markersize=2)
 plt.show()
