@@ -81,7 +81,7 @@ def main():
 
     x_train,y_train = getdata(args.path_train,ylab=2)
     # x.shape should be (-1,784)
-    train_scaler = Scaler(x_train.mean(axis=0),x_train.std(axis=0))
+    train_scaler = Scaler()
     x_train_normalized = train_scaler.transform(x_train)
     logging.info("\tx_train normalized")
     logging.info("\tgetting matrices now")
