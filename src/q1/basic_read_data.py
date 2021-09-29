@@ -57,6 +57,7 @@ def main():
         fig, ax = plt.subplots(2,1)
         ax[0].bar([_ for _ in range(1,6)],d)
         ax[1].hist(v.values(),bins=100)
+        print(d)
         plt.show()
 
 if __name__=="__main__":

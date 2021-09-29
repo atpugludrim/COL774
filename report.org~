@@ -1,0 +1,33 @@
+* Q1
+
+** Q1(a)
+- Punctutations were removed from the input data, and words containing
+  numbers like l77t code were also removed.
+- The bag of words model was implemented.
+- Optimal parameters are stored in a pickle file.
+- Train accuracy is \(51.868\%\) while test accuracy is \(66.086\%\).
+
+** Q1(b)
+- Expected random prediction accuracy is \(20\%\). Predicting the
+  maximum class, the accuracy will be \(66.086\%\).
+- As compared to random prediction, the accuracy gained is \(36.08\%\),
+  but there is no gain compared to maximum prediction. In fact, on
+  displaying the class predicted by the model, it is seen that the
+  model is \textbf{actually} only predicting the maximum class.
+
+** Q1(c)
+#+CAPTION: Confusion matrix
+[[/home/mridul/scai/ml/hw2/src/q1/Confusion_Matrix_1a.png]]
+- As noted earlier, the Naive Bayes model has learned to predict the
+  maximum class. It does so in all cases but one where a sample from
+  class "3" is predicted to be in class "1".
+- The only correctly classified samples belong to class "5".
+- This is most probably because of the unbalanced dataset. The
+  frequency of classes in the training data is listed here:
+\begin{align*}
+&\text{Category 1:} 2529 =5.05\%\\
+&\text{Category 2:} 2638 =5.28\%\\
+&\text{Category 3:} 5634 =11.27\%\\
+&\text{Category 4:} 13267 =26.53\%\\
+&\text{Catgeory 5:} 25932 =51.86\%
+\end{align*}

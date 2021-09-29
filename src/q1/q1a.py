@@ -18,7 +18,7 @@ def remove_punc(text):
     global punc
     for p in punc:
         if p in text:
-            text = text.replace(p,' ')
+            text = text.replace(p,'')
     text = re.sub("\\w*\\d+\\w*","",text)
     return text.strip().lower()
 
@@ -81,7 +81,6 @@ def test(dpath,thetas_file):
     total = 0
     for l in parse(dpath):
         total += 1
-        logging.warning("Parsing record: {}".format(total))
         k = int(float(l['overall']))-1 # ZERO INDEXING
         x = remove_punc(l['reviewText']).split()
 
@@ -96,8 +95,15 @@ def test(dpath,thetas_file):
                         _PHI = 1e-30 # FOR STABILITY
                     log_proba[k] += np.log(thetas[k][t])+np.log(_PHI)
         pred.append(np.argmax(log_proba)+1)
+        logging.warning("Parsing record: {}\tPrediction: {}\tTrue: {}".format(total,pred[-1],true[-1]))
     print("Accuracy:",(np.sum(np.array(true)==np.array(pred))/total*100),"%")
     logging.info("{}\n{}".format(true,pred))
+
+    # FOR CONFUSION MATRIX
+    with open('true.pkl','wb') as f:
+        pickle.dump(true,f)
+    with open('pred.pkl','wb') as f:
+        pickle.dump(pred,f)
 
 def main():
     parser = argparse.ArgumentParser(usage="use -h for list of options")
