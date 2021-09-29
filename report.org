@@ -5,25 +5,26 @@
   numbers like l77t code were also removed.
 - The bag of words model was implemented.
 - Optimal parameters are stored in a pickle file.
-- Train accuracy is \(51.868\%\) while test accuracy is \(66.086\%\).
+- Train accuracy is \(71.25\%\) while test accuracy is \(66.54\%\).
 
 ** Q1(b)
 - Expected random prediction accuracy is \(20\%\). Predicting the
   maximum class, the accuracy will be \(66.086\%\).
 - As compared to random prediction, the accuracy gained is \(36.08\%\),
-  but there is no gain compared to maximum prediction. In fact, on
-  displaying the class predicted by the model, it is seen that the
-  model is \textbf{actually} only predicting the maximum class.
+  but there is no significant gain compared to maximum prediction.
 
 ** Q1(c)
-#+CAPTION: Confusion matrix
+#+CAPTION: Confusion matrix for Q1(a)
 [[/home/mridul/scai/ml/hw2/src/q1/Confusion_Matrix_1a.png]]
-- As noted earlier, the Naive Bayes model has learned to predict the
-  maximum class. It does so in all cases but one where a sample from
-  class "3" is predicted to be in class "1".
-- The only correctly classified samples belong to class "5".
-- This is most probably because of the unbalanced dataset. The
-  frequency of classes in the training data is listed here:
+- Class "5" has the highest value of the diagonal entry. This is also
+  the class with highest number of samples in the training set.
+- It is also seen that classes that have a high prior, pull the
+  decision towards themselves: most of the false predictions belong to
+  class "5", then to class "4" and so on. The number of training
+  samples from each class is listed below.
+- Summing up the column for class "5", we can see 11984 = 85.6\% of
+  samples are predicted as belonging to class "5". 13.44\% to class
+  "4", 0.8\% to class "3", 0\% to class "2" and 0.157 to class "1".
 \begin{align*}
 &\text{Category 1:} 2529 =5.05\%\\
 &\text{Category 2:} 2638 =5.28\%\\
@@ -33,6 +34,8 @@
 \end{align*}
 
 ** Q1(d)
-- The classifier is still predicting the maximum class as the
-  output. Nothing has changed.
-- What's wrong, I don't understand.
+#+CAPTION: Confusion matrix for Q1(d)
+[[/home/mridul/scai/ml/hw2/src/q1/Confusion_Matrix_1d.png]]
+- Accuracy on test set is \(64.77\%\).
+- One would expect the accuracy to improve, but it actually goes down
+  by 1.77\%.

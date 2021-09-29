@@ -104,7 +104,9 @@ def test(dpath,thetas_file):
                     _PHI = phi[k]
                     if _PHI == 0:
                         _PHI = 1e-30 # FOR STABILITY
-                    log_proba[k] += np.log(thetas[k][t])+np.log(_PHI)
+                    log_proba[k] += np.log(thetas[k][t])
+        for k in range(5):
+            log_proba[k] += np.log(_PHI)
         pred.append(np.argmax(log_proba)+1)
         logging.warning("Parsing record: {}\tPrediction: {}\tTrue: {}".format(total,pred[-1],true[-1]))
     print("Accuracy:",(np.sum(np.array(true)==np.array(pred))/total*100),"%")
