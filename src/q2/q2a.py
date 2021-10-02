@@ -23,34 +23,59 @@ def getdata(path,ylab=-1):
     return np.array(data_x, dtype=np.float), np.array(data_y)
 
 class Scaler:
-    def __init__(this, mu=0, sig=255):
+    def __init__(this, mu=0., sig=255.):
         this.mu = mu
         this.sig = sig
-        this.sig[np.where(sig==0)]=1
     def transform(this, data):
         return (data - this.mu)/this.sig
     def inv_transform(this, data):
         return (data * this.sig) + this.mu
 
-def GaussianKernel(x,z):
+def GaussianKernel(x,y):
     gamma = 0.05
-    t1 = np.sum(np.square(x-z))
-    t2 = -gamma # MINUS SIGN TAKEN CARE OF HERE
-    return np.exp(t1*t2)
+    m = x.shape[0]
+    #X = x[...,np.newaxis]
+    #Z = np.repeat(X,m,axis=2)
+    #X = Z.T
+    #Y = y.reshape(-1,1)*1.
+    #Y_ = Y@Y.T
+    #P = np.multiply(np.exp(-gamma*np.sum(np.square(X-Z))),Y_)
+    #return P
+    P = np.zeros((m,m))
+    Y = y.reshape(-1,1)*1.
+    Y_ = Y@Y.T
+    for j in range(m):
+        z = x[j,:]
+        col_j = np.exp(-gamma*np.sum(np.square(x - z),axis=1))
+        P[:,j] = col_j
+    P = np.multiply(P,Y_)
+    return P
 
-def LinearKernel(x,z):
-    return np.sum(np.multiply(x,z))
+    #t1 = np.sum(np.square(x-y))
+    #t2 = -gamma # MINUS SIGN TAKEN CARE OF HERE
+    #return np.exp(t1*t2)
+
+def LinearKernel(x,y):
+    Y = y.reshape(-1,1)*1.
+    Xy = np.multiply(x,Y)
+    return Xy@Xy.T
+
+    #return np.sum(np.multiply(x,z))
 
 def make_matrices(x,y,save_P,kernel,name):
     m = x.shape[0]
     assert m == y.shape[0]
     c = 1
     if save_P:
-        P = np.zeros((m,m))
-        for i,x_ in enumerate(x):
-            for j,z_ in enumerate(x):
-                logging.info(f"\t{i}, {j}")
-                P[i,j] = y[i]*y[j]*kernel(x_,z_)*0.5
+        if name.lower() == "linear" or name.lower() == "gaussian":
+            P = kernel(x,y)
+            P = 0.5*P
+        else:
+            P = np.zeros((m,m))
+            for i,x_ in enumerate(x):
+                for j,z_ in enumerate(x):
+                    logging.info(f"\t{i}, {j}")
+                    P[i,j] = y[i]*y[j]*kernel(x_,z_)*0.5
         with open(f"P_{name}.pkl","wb") as f:
             pickle.dump(P,f)
     else:
