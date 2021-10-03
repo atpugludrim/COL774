@@ -39,3 +39,27 @@
 - Accuracy on test set is \(64.77\%\).
 - One would expect the accuracy to improve, but it actually goes down
   by 1.77\%.
+
+* Q2
+ 
+** Q2(a)
+*** i)
+Accuracy on training data is \(99.28\%\). Accuracy on test data is
+\(97.26\%\). There are 309 support vectors in this case.
+
+*** ii)
+Accuracy on training data is \(100\%\), while on test data is
+\(99.02\%\). There are 1856 support vectors in this case. The accuracy
+improves as compared to when using linear kernel, but so does the
+computation time. And in this particular case, the gain in accuracy is
+not enough to justify the loss in computation time.
+
+*** iii)
+- linear: nSV = 297. Test set accuracy is \(97.01\%\). Training and
+  testing times are 10\(\times\) faster than my cvxopt implementation.
+- gaussian: nSV = 1823. Test set accuracy is \(99.26\%\). Training and
+  testing times are 20\(\times\) faster than my cvxopt implmentation.
+- As noted [[https://stackoverflow.com/a/5333279][here]], it is not possible to extract weights and bias from
+  the svm model created by libsvm in python. I did not compare them.
+
+** Q2(b)
