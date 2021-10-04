@@ -107,3 +107,11 @@ For cvxopt\\
 Similar trends hold for libsvm implementation as well.
 
 *** iv)
+Value of C that gives best accuracy for 5-fold cross-validation
+is 5. This is also the value of C that gives the best accuracy for
+test set.\par
+The graph shows that even though there is some variation, the 5-fold
+cross-validation accuracies and the test set follow each other closely.
+#+CAPTION: Cross-validation versus test set accuracies
+[[/home/mridul/scai/ml/hw2/src/q2/kfold_cross_validation.png]]
+

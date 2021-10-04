@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def openfile(path):
-    df = pd.read_csv(path).astype(dtype=np.int)
+    df = pd.read_csv(path,header=None).astype(dtype=np.int)
     return df.values.reshape(-1)
 
 def getargs():
@@ -27,7 +27,7 @@ def getimages(chosen):
     imgs = []
     with open('/home/mridul/scai/ml/hw2/data/q2/test.csv','r') as f:
         for i, l in enumerate(f): 
-            if i-1 in chosen: # WHY i-1 IS NEEDED, I CAN'T SEEM TO UNDERSTAND
+            if i in chosen:
                 ctr += 1
                 img = extractimg(l)
                 imgs.append(img)
