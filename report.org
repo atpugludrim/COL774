@@ -63,3 +63,10 @@ not enough to justify the loss in computation time.
   the svm model created by libsvm in python. I did not compare them.
 
 ** Q2(b)
+*** i)
+Test set accuracy is \(96.84\%\). The testing process is very slow
+though, takes around 15 minutes on the test set of \(10^4\),000 samples.
+
+*** ii)
+*** iii)
+*** iv)
