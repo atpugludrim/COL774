@@ -1,16 +1,21 @@
-import pandas as pd
 import argparse
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output",required=True,type=str)
+    parser.add_argument("--libsvm",default=False,action='store_true')
     args = parser.parse_args()
     #############################################################
     true_ = pd.read_csv('true_multiclass.csv').astype(dtype=np.int)
     true = true_.values.reshape(-1)
-    pred_ = pd.read_csv('pred_multiclass.csv').astype(dtype=np.int)
-    pred = pred_.values.reshape(-1)
+    if args.libsvm:
+        pred_ = pd.read_csv('pred_multiclass_libsvm.csv').astype(dtype=np.int)
+        pred = pred_.values.reshape(-1)
+    else:
+        pred_ = pd.read_csv('pred_multiclass_cvxopt.csv').astype(dtype=np.int)
+        pred = pred_.values.reshape(-1)
     #############################################################
     # with open("true_multi","rb") as f:
     #     true = pickle.load(f)
@@ -36,7 +41,7 @@ def main():
             )
     table.scale(1,2)
     table.auto_set_font_size(False)
-    table.set_fontsize(8)
+    table.set_fontsize(10)
     plt.gca().set_axis_off()
     plt.savefig('{}.png'.format(args.output))
     plt.show()

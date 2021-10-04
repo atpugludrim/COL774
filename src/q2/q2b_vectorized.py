@@ -1,10 +1,10 @@
-import logging
 import time
-import pandas as pd
-import numpy as np
 import cvxopt
 import pickle
+import logging
 import argparse
+import numpy as np
+import pandas as pd
 from scipy.spatial.distance import cdist
 
 def getdata(path):
@@ -121,7 +121,7 @@ def test(args):
     with open('true_multiclass.csv','w') as f:
         for y in y_test:
             f.write(f"{y}\n")
-    with open('pred_multiclass.csv','w') as f:
+    with open('pred_multiclass_cvxopt.csv','w') as f:
         for y_ in y_hat.reshape(-1):
             f.write(f"{y_}\n")
     logging.info("\tStoring outputs in true.csv and pred_multiclass.csv")
@@ -144,7 +144,7 @@ def main():
     elif args.path_test is not None:
         test(args)
     else:
-        print("Provide either a training path or testing path.\n\nusage: q2a.py [-h] [--path-train PATH_TRAIN] [--path-test PATH_TEST] [--savep] --kernel {gaussian,linear} [--quiet]\n")
+        print("Provide either a training path or testing path.\n\nusage: q2a.py [-h] [--path-train PATH_TRAIN] [--path-test PATH_TEST] [--savep] [--quiet]\n")
 
 if __name__=="__main__":
     s = time.perf_counter()
