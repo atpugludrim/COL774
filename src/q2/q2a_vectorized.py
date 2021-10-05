@@ -148,7 +148,7 @@ def test(args):
             f.write(f"{y_}\n")
     logging.info(f"\tStoring outputs in true.csv and pred_{args.kernel}.csv")
     acc = np.sum(y_test == y_hat.reshape(-1))*100.0/y_test.shape[0]
-    logging.info("\tAccuracy is : {:.2f}%".format(acc))
+    print("Accuracy is : {:.2f}%".format(acc))
 
 def main():
     parser = argparse.ArgumentParser()

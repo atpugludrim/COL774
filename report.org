@@ -1,3 +1,5 @@
+#+AUTHOR: Mridul Gupta \\ 2021AIZ8322
+#+OPTION: toc:nil
 * Q1
 
 ** Q1(a)
@@ -6,6 +8,10 @@
 - The bag of words model was implemented.
 - Optimal parameters are stored in a pickle file.
 - Train accuracy is \(71.25\%\) while test accuracy is \(66.54\%\).
+- Also, note that I tried to improve the running time to the point I
+  wrote several different versions of the code, but it just doesn't
+  get better than 30-40 mins. I hope this counts as \lq\lq
+  reasonable\rq\rq\ time.
 
 ** Q1(b)
 - Expected random prediction accuracy is \(20\%\). Predicting the
@@ -40,6 +46,40 @@
 - One would expect the accuracy to improve, but it actually goes down
   by 1.77\%.
 
+** Q1(e)
+#+CAPTION: Frequencies of words
+[[/home/mridul/scai/ml/hw2/src/q1/freq_boxplot.png]]
+Features used was review lengths discretized to four buckets based on
+boxplot of classwise lengths plotted. Also, since most of the reviews
+have \(<400\) words after removal of stop words but some reviews go on
+to contain around 2500 words. We have a lot of data, so in this step I
+do not process examples that contain more than 400 words. This can be
+seen as a meta feature, to avoid overfitting. I tested with n-gram
+extractions, but it was taking a lot of time to build the vocabulary,
+so I had to terminate the code. The accuracy is no still around
+\(65\%\) but there is some speed gain as we are not processing long
+reviews.
+
+** Q1(f)
+The class-wise F1-scores and macro F1-score are:
+\noindent\begin{tabular}{cc}
+Class 1 & 26.95\%\\
+Class 2 & 4.70\%\\
+Class 3 & 18.77\%\\
+Class 4 & 34.54\%\\
+Class 5 & 80.36\%\\
+Macro F1 & 33.07\%
+\end{tabular}
+The macro F1-score and the per class F1-scores is more suited in this
+kind of dataset as the dataset is imabalanced, and this metric gives
+insights into the performance per class. An extreme case might be of
+cancer cell detection from images, where we might have very few
+examples of the positive class. But it will be crucial to classify
+them correctly so that a patient gets correct treatment on time and a
+healthy person doesn't has to go through the treatment.
+
+
+** Q1(g)
 * Q2
  
 ** Q2(a)

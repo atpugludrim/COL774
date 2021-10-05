@@ -18,7 +18,7 @@ def remove_punc(text):
     global punc
     for p in punc:
         if p in text:
-            text = text.replace(p,'')
+            text = text.replace(p,' ')
     text = re.sub("\\w*\\d+\\w*","",text)
     return text.strip().lower()
 
@@ -30,7 +30,7 @@ def train(dpath,of):
     _deno = [0.0 for _ in range(5)]
     #############################################################
     for i, l in enumerate(parse(dpath)):
-        logging.warning("Parsing record: {}".format(i))
+        logging.info("Parsing record: {}".format(i))
         k = int(float(l['overall']))-1 # ZERO INDEXING
         x = remove_punc(l['reviewText']).split()
         _total += 1
@@ -38,7 +38,7 @@ def train(dpath,of):
         _deno[k] += len(x)
         updated = []
         for t in x:
-            logging.debug("Word: {}".format(t))
+            logging.info("Word: {}".format(t))
             if t not in v:
                 v.append(t)
 
@@ -57,16 +57,16 @@ def train(dpath,of):
         for word in _nume[k]:
             if _deno[k]:
                 sums[k] += _nume[k][word]/_deno[k]
-    logging.warning("Sums of theta for each class: {}".format(",".join(["{:.2f}".format(s) for s in sums])))
+    logging.info("Sums of theta for each class: {}".format(",".join(["{:.2f}".format(s) for s in sums])))
     # SMOOTHING
     thetas = [dict() for _ in range(5)]
     alpha = 1
     for k,n in enumerate(_nume):
         for word in n:
-            logging.warning("smoothing: {} {}".format(k,word))
-            thetas[k][word] = (_nume[k][word]+alpha)/(_deno[k]+alpha*len(v))
-    logging.warning(len(v))
-    logging.debug("phi:{}\nth:{}".format(_phi,thetas))
+            logging.info("smoothing: {} {}".format(k,word))
+            thetas[k][word] = np.log((_nume[k][word]+alpha)/(_deno[k]+alpha*len(v)))
+    logging.info(len(v))
+    logging.info("phi:{}\nth:{}".format(_phi,thetas))
     with open('{}.pkl'.format(of),'wb') as f:
         pickle.dump({'phi':_phi,'thetas':thetas},f)
 
@@ -93,18 +93,18 @@ def test(dpath,thetas_file):
                     _PHI = phi[k]
                     if _PHI == 0:
                         _PHI = 1e-30 # FOR STABILITY
-                    log_proba[k] += np.log(thetas[k][t])
+                    log_proba[k] += thetas[k][t]
         for k in range(5):
             log_proba[k] += np.log(_PHI)
         pred.append(np.argmax(log_proba)+1)
-        logging.warning("Parsing record: {}\tPrediction: {}\tTrue: {}".format(total,pred[-1],true[-1]))
+        logging.info("Parsing record: {}\tPrediction: {}\tTrue: {}".format(total,pred[-1],true[-1]))
     print("Accuracy:",(np.sum(np.array(true)==np.array(pred))/total*100),"%")
     logging.info("{}\n{}".format(true,pred))
 
     # FOR CONFUSION MATRIX
     with open('true.pkl','wb') as f:
         pickle.dump(true,f)
-    with open('pred.pkl','wb') as f:
+    with open('pred_1a.pkl','wb') as f:
         pickle.dump(pred,f)
 
 def main():
@@ -125,6 +125,6 @@ if __name__=="__main__":
     s = time.perf_counter()
     main()
     e = time.perf_counter()
-    logging.warning("It took {:.3f}s".format(e-s))
+    logging.info("It took {:.3f}s".format(e-s))
     if (e-s) > 100:
-        logging.warning("That's too long, this is not good.")
+        logging.info("That's too long, this is not good.")

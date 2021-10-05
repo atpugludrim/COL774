@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from libsvm.svmutil import *
 
 logging.basicConfig(level=logging.INFO)
-matplotlib.rcParams['text.usetex'] = True
+#matplotlib.rcParams['text.usetex'] = True
 
 def getargs():
     parser = argparse.ArgumentParser()
@@ -105,8 +105,8 @@ def main():
     # STEP3
     plot_graphs(results['accuracies'], test_results['accuracies'])
     # STEP4
-    logging.info(f"\tValue of C with best accuracy for validation:{results['best_c']}")
-    logging.info(f"\tValue of C with best accuracy for test dataset:{test_results['best_c']}")
+    print(f"Value of C with best accuracy for validation:{results['best_c']}")
+    print(f"Value of C with best accuracy for test dataset:{test_results['best_c']}")
 
 if __name__ == "__main__":
     main()

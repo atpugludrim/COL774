@@ -3,62 +3,28 @@ import json
 import string
 import argparse
 import matplotlib.pyplot as plt
+import matplotlib
 
-def parse(path):
-    with open(path,'r') as f:
-        for l in f:
-            yield json.loads(l)
-
-punc = list(string.punctuation)
-def remove_punc(text):
-    global punc
-    for p in punc:
-        if p in text:
-            text = text.replace(p,' ')
-    text = re.sub("\\w*\\d+\\w*","",text)
-    return text.strip().lower()
-
+from q1a import parse, remove_punc
+from q1d import dostemming, remove_stopwords
+matplotlib.rcParams['text.usetex']=True
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p',required=True,help='path to data')
-    parser.add_argument('-n',help='record number to show')
-    parser.add_argument('-b',default=False,action='store_true',help='plot bar chart')
-    parser.add_argument('-v',default=False,action='store_true',help='enumerate vocabulary')
     args = parser.parse_args()
-    if args.n is not None:
-        n = int(float(args.n))
-    else:
-        n = 15
-    print("Showing record:",n)
-    d = [0 for _ in range(5)]
-    v = dict()
     #############################################################
+    lens = [[],[],[],[],[]]
     for i, l in enumerate(parse(args.p)):
-        d[int(float(l['overall']))-1] += 1
-        #
-        if args.v:
-            for t in remove_punc(l['reviewText']).split():
-                if t not in v:
-                    v[t] = 1
-                else:
-                    v[t] += 1
-        #
-        if i != n:
-            continue
-        for k in l:
-            print("{}:\t{}".format(k,l[k]))
-    print(len(v.keys()))
-    if args.v:
-        f = open('vocabulory.txt','w')
-        for k in v:
-            f.write("{}\t{}\n".format(k,v[k]))
-        f.close()
-    if args.b:
-        fig, ax = plt.subplots(2,1)
-        ax[0].bar([_ for _ in range(1,6)],d)
-        ax[1].hist(v.values(),bins=100)
-        print(d)
-        plt.show()
+        print(f"{i}",end="\r")
+        stemmed = dostemming(remove_punc(remove_stopwords(l['reviewText']))).split()
+        y = int(float(l['overall']))-1
+        lens[y].append(len(stemmed))
+    plt.boxplot(lens)
+    plt.xticks([1,2,3,4,5],['$\\mathrm{Class \\;'+'{}'.format(k+1)+'}$' for k in range(5)])
+    plt.ylabel('$\\mathrm{ Number\\; of\\; words\\; after\\; stemming\\; and\\; stopword\\; removal}$')
+    plt.xlabel('$\\mathrm{Class}$')
+    plt.savefig('freq_boxplot.png')
+    #plt.show()
 
 if __name__=="__main__":
     main()

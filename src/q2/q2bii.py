@@ -28,6 +28,9 @@ def test(args):
     m = svm_load_model(f'libsvm_multiclass.model')
     p_label, p_acc, p_val = svm_predict(y_test,x_test,m)
     ACC, MSE, SCC = evaluations(y_test, p_label)
+    #with open('true_multiclass.csv','w') as f:
+    #    for y in y_test:
+    #        f.write(f"{y}\n")
     with open('pred_multiclass_libsvm.csv','w') as f:
         for l in p_label:
             f.write(f'{l}\n')
