@@ -82,6 +82,13 @@ then
 	elif [[ "$partnum" == "g" ]]
 	then
 		echo "Running part Q1(g)."
+		if ! [ -e summary_stem_stop_x.txt -a -e summary_test_stem_stop_x.txt ]
+		then
+			python3 process_data_for_g.py -dpath "$trianp" -stem-stop -outpath summary
+			python3 process_data_for_g.py -dpath "$testp" -stem-stop -outpath summary_test
+		fi
+		python3 q1g.py -px "train_stem_stop_x.txt" -py "train_stem_stop_y.txt" --train --output_file thetas1g --thetas_file thetas1d -sx summary_stem_stop_x.txt
+		python3 q1g.py -px "test_stem_stop_x.txt" -py "test_stem_stop_y.txt" --thetas_file thetas1g -sx summary_stem_stop_x.txt
 	else
 		usage
 	fi

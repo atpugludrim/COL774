@@ -1,3 +1,4 @@
+import os
 import time
 import pickle
 import logging
@@ -7,16 +8,20 @@ import pandas as pd
 
 from scipy.sparse import lil_matrix as matrix
 
-def train(px,py,of):
+from q1d import train, test
+
+def train_1(px,py,sx,of,th):
+    if not os.path.isfile(th):# CHECKS IF 1D ALREADY RUN
+        train(px,py,th[:-4])
     ys = pd.read_csv(py,header=None).astype(dtype=np.int).values.reshape(-1)
     _total = len(ys)
     _phi = [(1./_total)*np.sum(ys==(k+1)) for k in range(5)]
-    vocab = pd.read_csv('vocab_stem_stop.txt',header=None).astype(dtype=str).values.reshape(-1)
+    vocab = pd.read_csv('vocab_summary.txt',header=None).astype(dtype=str).values.reshape(-1)
     m = len(vocab)
     _nume = matrix((m,5))
     _deno = [0.0 for _ in range(5)]
     #############################################################
-    with open(px,'r') as xf:
+    with open(sx,'r') as xf:
         for i, l in enumerate(xf):
             logging.info("Reading record: {}".format(i))
             x = l.split()
@@ -87,20 +92,69 @@ def test(px,py,thetas_file):
                 if _PHI == 0:
                     _PHI = 1e-30
                 log_proba[k] += np.log(_PHI)
-            pred.append(np.argmax(log_proba)+1)
+            lp = np.array(log_proba)-np.max(log_proba)
+            s = np.sum(np.exp(lp))
+            proba = []
+            for k in range(5):
+                proba.append(np.exp(lp[k])/s)
+            pred.append(proba)
+    return pred
+
+def test_1(px,py,sx,thetas_file,th):
+    pred_d = test(px,py,th[:-4])
+    with open("{}.pkl".format(thetas_file),'rb') as f:
+        parameters = pickle.load(f)
+    thetas = parameters['thetas']
+    phi = parameters['phi']
+
+    pred = []
+    ys = pd.read_csv(py,header=None).astype(dtype=np.int).values.reshape(-1)
+    total = len(ys)
+    vocab = pd.read_csv('vocab_summary.txt',header=None).astype(dtype=str).values.reshape(-1)
+    with open(sx,'r') as xf:
+        for idx, l in enumerate(xf):
+            x = l.split()
+
+            log_proba = [0.0 for k in range(5)]
+            for t in x:
+                try:
+                    idx = np.searchsorted(vocab,t)
+                except Exception as e:
+                    logging.info(f"\tException {e}")
+                    print(type(vocab[0]))
+                    continue
+                if vocab[idx] != t:
+                    continue
+                for k in range(5):
+                    log_proba[k] += thetas[idx,k]
+            for k in range(5):
+                _PHI = phi[k]
+                if _PHI == 0:
+                    _PHI = 1e-30
+                log_proba[k] += np.log(_PHI)
+            lp = np.array(log_proba)-np.max(log_proba)
+            s = np.sum(np.exp(lp))
+            proba = []
+            for k in range(5):
+                proba.append(np.exp(lp[k])/s)
+            if max(pred_d[idx]) > max(proba):
+                pred.append(np.argmax(pred_d[idx])+1)
+            else:
+                pred.append(np.argmax(log_proba)+1)
     print("Accuracy:",(np.sum(ys==np.array(pred))/total*100),"%")
     #logging.info("{}\n{}".format(true,pred))
 
     # FOR CONFUSION MATRIX
     with open('true.pkl','wb') as f:
         pickle.dump(ys,f)
-    with open('pred_1d.pkl','wb') as f:
+    with open('pred_1g.pkl','wb') as f:
         pickle.dump(pred,f)
 
 def main():
     parser = argparse.ArgumentParser(usage="use -h for list of options")
     parser.add_argument('-px',required=True,help='path to data')
     parser.add_argument('-py',required=True,help='path to data')
+    parser.add_argument('-sx',required=True,help='path to data')
     parser.add_argument('--logging-level',default="warning",type=str)
     parser.add_argument('--train',default=False,action='store_true')
     parser.add_argument('--output_file',default="theta_ls",type=str,help='theta dictionaries will be output to this file for training; .pkl will be appended automatically')
@@ -108,9 +162,17 @@ def main():
     args = parser.parse_args()
     logging.basicConfig(level=getattr(logging,args.logging_level.upper()),format='%(name)s - %(message)s\r')
     if args.train:
-        train(args.px,args.py,args.output_file)
+        if args.thetas_file is None:
+            th = 'theta1d.pkl'
+        else:
+            th = f'{args.thetas_file}.pkl'
+        train_1(args.px,args.py,args.sx,args.output_file,th)
     else:
-        test(args.px,args.py,args.thetas_file)
+        if os.path.isfile('theta_1d.pkl'):
+            th = 'theta_1d.pkl'
+        elif os.path.isfile('theta1d.pkl'):
+            th = 'theta1d.pkl'
+        test_1(args.px,args.py,args.sx,args.thetas_file,th)
 
 if __name__=="__main__":
     s = time.perf_counter()

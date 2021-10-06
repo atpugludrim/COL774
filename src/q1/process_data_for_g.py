@@ -46,13 +46,10 @@ def dostemming(text):
     return " ".join(new_words)
 
 def get_processed_line(line, stem_stop):
-    if stem_stop:
-        return dostemming(remove_punc(remove_stopwords(line['summary'])))
-    else:
-        return remove_punc(line['reviewText'])
+    return dostemming(remove_punc(remove_stopwords(line['summary'])))
 
 def process_train(dpath,outpath,stem_stop,suff):
-    yf = open("{}_y.txt".format(outpath),'w')
+    #yf = open("{}_y.txt".format(outpath),'w')
     xf = open("{}_x.txt".format(outpath),'w')
     vocab = []
     for idx, line in enumerate(parse(dpath)):
@@ -67,9 +64,9 @@ def process_train(dpath,outpath,stem_stop,suff):
                 if word not in vocab:
                     vocab.append(word)
         #
-        yf.write("{}\n".format(y))
+        #yf.write("{}\n".format(y))
         xf.write("{}\n".format(x))
-    yf.close()
+    #yf.close()
     xf.close()
     vocab = np.sort(vocab).reshape(-1).tolist()
     with open("vocab_summary.txt","w") as f:
@@ -77,7 +74,7 @@ def process_train(dpath,outpath,stem_stop,suff):
             f.write("{}\n".format(word))
 
 def process_test(dpath,outpath,stem_stop):
-    yf = open("{}_y.txt".format(outpath),'w')
+    #yf = open("{}_y.txt".format(outpath),'w')
     xf = open("{}_x.txt".format(outpath),'w')
     for idx, line in enumerate(parse(dpath)):
         if not idx % 400:
@@ -85,9 +82,9 @@ def process_test(dpath,outpath,stem_stop):
         y = int(float(line['overall']))
         x = get_processed_line(line,stem_stop)
         #
-        yf.write("{}\n".format(y))
+        #yf.write("{}\n".format(y))
         xf.write("{}\n".format(x))
-    yf.close()
+    #yf.close()
     xf.close()
         
 def main():
