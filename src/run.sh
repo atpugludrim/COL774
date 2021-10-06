@@ -135,7 +135,7 @@ then
 			python3 q2aiii.py --path-test test2.csv --kernel "linear" --quiet
 			echo "Using libsvm with gaussian kernel"
 			python3 q2aiii.py --path-train train2.csv --kernel "gaussian" --quiet
-			python3 q2aiii.py --path-test test2.csv --kernel "guassian" --quiet
+			python3 q2aiii.py --path-test test2.csv --kernel "gaussian" --quiet
 		else
 			usage
 		fi
