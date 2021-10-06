@@ -1,43 +1,32 @@
-import re
-import json
 import time
 import pickle
-import string
 import logging
 import argparse
 import numpy as np
-import matplotlib.pyplot as plt
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
+import pandas as pd
+from scipy.sparse import lil_matrix as matrix
 
-from q1a import parse, remove_punc
-
-stop_words = set(stopwords.words('english'))
-punkt = string.punctuation
-ps = PorterStemmer()
-def remove_stopwords(text):
-    global stop_words
-    splitstring = "\s|\.|,|\(|\)|-|\\\\|\"|!|#|\$|%|&|/|\*|\+|:|;|<|=|>|\?|@|\[|\]|\^|_|\`|\{|\}|\||~"
-    words = [w.strip(punkt) for w in re.split(splitstring,text.strip())]
-    new_words = []
-    for w in words:
-        if w.lower() not in stop_words:
-            new_words.append(w)
-    return " ".join(new_words)
-
-def dostemming(text):
-    global ps
-    words = text.split()
-    new_words = []
-    for w in words:
-        new_words.append(ps.stem(w))
-    return " ".join(new_words)
+vocab = None
 
 def get_n_grams(X,n):
+    global vocab
     x = np.array(X)
-    indexer = np.arange(n)[None,:]+np.arange(len(X)-n+1)[:,None]
+    indexer = np.arange(n)[None,:]+n*np.arange(len(X)//n)[:,None]
     ngrams = x[indexer]
-    ngrams_list = ['_'.join(n) for n in ngrams]
+    #ngrams_list = ['_'.join(n) for n in ngrams]
+    ngrams_list = []
+    for ng in ngrams:
+        rep = ""
+        for word in ng:
+            try:
+                idx = np.searchsorted(vocab,word)
+            except Exception as e:
+                logging.info(f"\tException {e}")
+                continue
+            if vocab[idx] != word:
+                continue
+            rep += "{}_".format(idx)
+        ngrams_list.append(rep)
     return ngrams_list
 
 def get_len(l):
@@ -50,111 +39,108 @@ def get_len(l):
     else:
         return "THREE"
 
-def train(dpath,of):
-    v = []
-    _total = 0
-    _phi = [0.0 for _ in range(5)]
+def train(px,py,of):
+    ys = pd.read_csv(py,header=None).astype(dtype=np.int).values.reshape(-1)
+    _total = len(ys)
+    _phi = [(1./_total)*np.sum(ys==(k+1)) for k in range(5)]
     _nume = [dict() for _ in range(5)]
     _deno = [0.0 for _ in range(5)]
+    ng_vocab = []
     #############################################################
-    for i, l in enumerate(parse(dpath)):
-        logging.info("Parsing record: {}".format(i))
-        k = int(float(l['overall']))-1 # ZERO INDEXING
-        x = dostemming(remove_punc(remove_stopwords(l['reviewText']))).split()
-        # stemmed = dostemming(remove_punc(remove_stopwords(l['reviewText']))).split()
-        if len(x) > 400:
-            continue
-        # x = get_n_grams(stemmed, 5)
-        x.append(get_len(len(x)))
-        _total += 1
-        _phi[k] += 1
-        _deno[k] += len(x)
-        updated = []
-        for t in x:
-            if t not in v:
-                v.append(t)
-
-            for idx in range(5):
-                if t not in _nume[idx]:
-                    _nume[idx][t] = 0.0
-            if t in updated:
+    with open(px,'r') as xf:
+        for i, l in enumerate(xf):
+            logging.info("Parsing record: {}".format(i))
+            k = ys[i]-1
+            stemmed = l.split()
+            if len(stemmed) > 400:
                 continue
-            updated.append(t)
-            _nume[k][t] += np.sum(np.array(x)==t)
-        #
+            x = get_n_grams(stemmed, 5)
+            x.append(get_len(len(stemmed)))
+            _deno[k] += len(x)
+            for t in x:
+                if t not in ng_vocab:
+                    ng_vocab.append(t)
+                for idx in range(5):
+                    if t not in _nume[idx]:
+                        _nume[idx][t] = 0.0
+                _nume[k][t] += 1
+            #
     # CHECKING PROBABILITIES SUM TO 1 BEFORE SMOOTHING
-    sums = [0 for _ in range(5)]
-    for k in range(5):
-        _phi[k] /= _total
-        for word in _nume[k]:
-            if _deno[k]:
-                sums[k] += _nume[k][word]/_deno[k]
-    logging.info("Sums of theta for each class: {}".format(",".join(["{:.2f}".format(s) for s in sums])))
+    # sums = [0 for _ in range(5)]
+    # for k in range(5):
+    #     _phi[k] /= _total
+    #     for word in _nume[k]:
+    #         if _deno[k]:
+    #             sums[k] += _nume[k][word]/_deno[k]
+    # logging.info("Sums of theta for each class: {}".format(",".join(["{:.2f}".format(s) for s in sums])))
     # SMOOTHING
     thetas = [dict() for _ in range(5)]
     alpha = 1
     for k,n in enumerate(_nume):
         for word in n:
             logging.info("smoothing: {} {}".format(k,word))
-            thetas[k][word] = np.log((_nume[k][word]+alpha)/(_deno[k]+alpha*len(v)))
-    logging.info(len(v))
-    logging.info("phi:{}\nth:{}".format(_phi,thetas))
+            thetas[k][word] = np.log((_nume[k][word]+alpha)/(_deno[k]+alpha*len(ng_vocab)))
+    logging.info(len(ng_vocab))
+    #logging.info("phi:{}\nth:{}".format(_phi,thetas))
     with open('{}.pkl'.format(of),'wb') as f:
         pickle.dump({'phi':_phi,'thetas':thetas},f)
 
-def test(dpath,thetas_file):
+def test(px,py,thetas_file):
+    global vocab
     with open("{}.pkl".format(thetas_file),'rb') as f:
         parameters = pickle.load(f)
     thetas = parameters['thetas']
     phi = parameters['phi']
 
-    true = []
+    ys = pd.read_csv(py,header=None).astype(dtype=np.int).values.reshape(-1)
+    total = len(ys)
     pred = []
-    total = 0
-    for l in parse(dpath):
-        total += 1
-        k = int(float(l['overall']))-1 # ZERO INDEXING
-        x = dostemming(remove_punc(remove_stopwords(l['reviewText']))).split()
-        # stemmed = dostemming(remove_punc(remove_stopwords(l['reviewText']))).split()
-        # x = get_n_grams(stemmed, 5)
-        x.append(get_len(len(x)))
+    with open(px,'r') as xf:
+        for l in xf:
+            total += 1
+            stemmed = l.split()
+            x = get_n_grams(stemmed, 5)
+            x.append(get_len(len(stemmed)))
 
-        true.append(k+1)
-        log_proba = [0.0 for _ in range(5)]
-        for t in x:
+            log_proba = [0.0 for _ in range(5)]
+            for t in x:
+                for k in range(5):
+                    #logging.info("Word: {}".format(t))
+                    if t in thetas[k]:
+                        log_proba[k] += thetas[k][t]
             for k in range(5):
-                logging.info("Word: {}".format(t))
-                if t in thetas[k]:
-                    _PHI = phi[k]
-                    if _PHI == 0:
-                        _PHI = 1e-30 # FOR STABILITY
-                    log_proba[k] += thetas[k][t]
-        for k in range(5):
-            log_proba[k] += np.log(_PHI)
-        pred.append(np.argmax(log_proba)+1)
-        logging.info("Parsing record: {}\tPrediction: {}\tTrue: {}".format(total,pred[-1],true[-1]))
-    print("Accuracy:",(np.sum(np.array(true)==np.array(pred))/total*100),"%")
-    logging.info("{}\n{}".format(true,pred))
+                _PHI = phi[k]
+                if _PHI == 0:
+                    _PHI = 1e-30
+                log_proba[k] += np.log(_PHI)
+            pred.append(np.argmax(log_proba)+1)
+            #logging.info("Parsing record: {}\tPrediction: {}\tTrue: {}".format(total,pred[-1],true[-1]))
+    print("Accuracy:",(np.sum(ys==np.array(pred))/total*100),"%")
+    #logging.info("{}\n{}".format(true,pred))
 
     # FOR CONFUSION MATRIX
     with open('true.pkl','wb') as f:
-        pickle.dump(true,f)
+        pickle.dump(ys,f)
     with open('pred_1e.pkl','wb') as f:
         pickle.dump(pred,f)
 
 def main():
     parser = argparse.ArgumentParser(usage="use -h for list of options")
-    parser.add_argument('-p',required=True,help='path to data')
+    parser.add_argument('-px',required=True,help='path to data')
+    parser.add_argument('-py',required=True,help='path to data')
     parser.add_argument('--logging-level',default="warning",type=str)# CHANGE DEFAULT TO WARNING
     parser.add_argument('--train',default=False,action='store_true')
     parser.add_argument('--output_file',default="theta_ls",type=str,help='theta dictionaries will be output to this file for training; .pkl will be appended automatically')
     parser.add_argument('--thetas_file',default="theta_ls",type=str,help='theta dictionaries will be loaded from this file for testing; .pkl will be appended automatically')
     args = parser.parse_args()
     logging.basicConfig(level=getattr(logging,args.logging_level.upper()),format='%(name)s - %(message)s\r')
+
+    global vocab
+    vocab = pd.read_csv('vocab_stem_stop.txt',header=None).astype(dtype=str).values.reshape(-1)
     if args.train:
-        train(args.p,args.output_file)
+        train(args.px,args.py,args.output_file)
     else:
-        test(args.p,args.thetas_file)
+        test(args.px,args.py,args.thetas_file)
 
 if __name__=="__main__":
     s = time.perf_counter()

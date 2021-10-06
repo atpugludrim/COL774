@@ -18,35 +18,67 @@ then
 	cd q1
 	if [[ "$partnum" == "a" ]]
 	then
-		echo "Running part Q1(a). This should take around 30 mins."
+		if ! [ -e train_x.txt -a -e train_y.txt -a -e test_x.txt -a -e test_y.txt ]
+		then
+			echo "Preprocessing data"
+			python3 process_data.py -dpath "$trainp" -outpath train -quiet
+			python3 process_data.py -dpath "$testp" -outpath test -quiet
+		else
+			echo "Using already existing file"
+		fi
+		echo "Running part Q1(a). This should take around 10 mins."
 		echo "Training"
-		python3 q1a.py -p "$trainp" --train --output_file thetas1a
+		python3 q1a.py -px "train_x.txt" -py "train_y.txt" --train --output_file thetas1a
 		echo "Training complete"
 		echo "Accuracy on train set"
-		python3 q1a.py -p "$trainp" --thetas_file thetas1a
+		python3 q1a.py -px "train_x.txt" -py "train_y.txt" --thetas_file thetas1a
 		echo "Accuracy on test set"
-		python3 q1a.py -p "$testp" --thetas_file thetas1a
+		python3 q1a.py -px "test_x.txt" -py "test_y.txt" --thetas_file thetas1a
 	elif [[ "$partnum" == "b" ]]
 	then
-		echo b
+		if ! [ -e train_y.txt -a -e test_y.txt ]
+		then
+			echo "Preprocessing data"
+			python3 process_data.py -dpath "$trainp" -outpath train -quiet
+			python3 process_data.py -dpath "$testp" -outpath test -quiet
+		else
+			echo "Using already existing file"
+		fi
+		python3 -py test_y.txt -py_train train_y.txt
 	elif [[ "$partnum" == "c" ]]
 	then
 		echo "This can only be run after Q1(a) is run."
 		python3 q1c.py --output Conf1a
 	elif [[ "$partnum" == "d" ]]
 	then
-		echo "Running part Q1(d). This should take around 30 mins."
+		if ! [ -e train_stem_stop_x.txt -a -e train_stem_stop_y.txt -a -e test_stem_stop_x.txt -a -e test_stem_stop_y.txt ]
+		then
+			echo "Preprocessing data"
+			python3 process_data.py -dpath "$trainp" -outpath train -quiet -stem-stop
+			python3 process_data.py -dpath "$testp" -outpath test -quiet -stem-stop
+		else
+			echo "Using already existing file"
+		fi
+		echo "Running part Q1(d). This should take around 5-10 mins."
 		echo "Training"
-		python3 q1d.py -p "$trainp" --train --output_file thetas1d
-		echo "Testing"
-		python3 q1d.py -p "$testp" --thetas_file thetas1d
+		python3 q1d.py -px "train_step_stop_x.txt" -py "train_step_stop_y.txt" --train --output_file thetas1d
+		echo "Accuracy on test set"
+		python3 q1d.py -px "test_step_stop_x.txt" -py "test_step_stop_y.txt" --thetas_file thetas1d
 	elif [[ "$partnum" == "e" ]]
 	then
+		if ! [ -e train_stem_stop_x.txt -a -e train_stem_stop_y.txt -a -e test_stem_stop_x.txt -a -e test_stem_stop_y.txt ]
+		then
+			echo "Preprocessing data"
+			python3 process_data.py -dpath "$trainp" -outpath train -quiet -stem-stop
+			python3 process_data.py -dpath "$testp" -outpath test -quiet -stem-stop
+		else
+			echo "Using already existing file"
+		fi
 		echo "Running part Q1(e)."
 		echo "Training"
-		python3 q1e.py -p "$trainp" --train --output_file thetas1e
-		echo "Testing"
-		python3 q1e.py -p "$testp" --thetas_file thetas1e
+		python3 q1e.py -px "train_step_stop_x.txt" -py "train_step_stop_y.txt" --train --output_file thetas1e
+		echo "Accuracy on test set"
+		python3 q1e.py -px "test_step_stop_x.txt" -py "test_step_stop_y.txt" --thetas_file thetas1e
 	elif [[ "$partnum" == "g" ]]
 	then
 		echo "Running part Q1(g)."
@@ -68,21 +100,35 @@ then
 	then
 		if [[ "$partnum" == "a" ]]
 		then
-			# MAKE CLASS 2 vs 3 DATASET HERE
-			python3 q2a_vectorized.py --path-train "$trainp" --savep --kernel "linear" --quiet
-			python3 q2a_vectorized.py --path-test "$testp" --kernel "linear" --quiet
+			if ! [ -e train2.csv -a -e test2.csv ]
+			then
+				echo "This uses awk to extract binary classification samples."
+				bash extract.sh "$trainp" "$testp"
+			fi
+			python3 q2a_vectorized.py --path-train train2.csv --savep --kernel "linear" --quiet
+			python3 q2a_vectorized.py --path-test test2.csv --kernel "linear" --quiet
 		elif [[ "$partnum" == "b" ]]
 		then
-			python3 q2a_vectorized.py --path-train "$trainp" --savep --kernel "gaussian" --quiet
-			python3 q2a_vectorized.py --path-test "$testp" --kernel "guassian" --quiet
+			if ! [ -e train2.csv -a -e test2.csv ]
+			then
+				echo "This uses awk to extract binary classification samples."
+				bash extract.sh "$trainp" "$testp"
+			fi
+			python3 q2a_vectorized.py --path-train train2.csv --savep --kernel "gaussian" --quiet
+			python3 q2a_vectorized.py --path-test test2.csv --kernel "guassian" --quiet
 		elif [[ "$partnum" == "c" ]]
 		then
+			if ! [ -e train2.csv -a -e test2.csv ]
+			then
+				echo "This uses awk to extract binary classification samples."
+				bash extract.sh "$trainp" "$testp"
+			fi
 			echo "Using libsvm with linear kernel"
-			python3 q2aiii.py --path-train "$trainp" --kernel "linear" --quiet
-			python3 q2aiii.py --path-test "$testp" --kernel "linear" --quiet
+			python3 q2aiii.py --path-train train2.csv --kernel "linear" --quiet
+			python3 q2aiii.py --path-test test2.csv --kernel "linear" --quiet
 			echo "Using libsvm with gaussian kernel"
-			python3 q2aiii.py --path-train "$trainp" --kernel "gaussian" --quiet
-			python3 q2aiii.py --path-test "$testp" --kernel "guassian" --quiet
+			python3 q2aiii.py --path-train train2.csv --kernel "gaussian" --quiet
+			python3 q2aiii.py --path-test test2.csv --kernel "guassian" --quiet
 		else
 			usage
 		fi

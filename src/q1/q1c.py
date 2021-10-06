@@ -8,7 +8,7 @@ def main():
     args = parser.parse_args()
     with open("true.pkl","rb") as f:
         true = pickle.load(f)
-    with open("pred.pkl","rb") as f:
+    with open("pred_1a.pkl","rb") as f:
         pred = pickle.load(f)
     cm = [[0 for _ in range(5)] for _ in range(5)]
     for t,p in zip(true,pred):

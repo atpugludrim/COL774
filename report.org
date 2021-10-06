@@ -114,7 +114,7 @@ different from the cvxopt implementation. Without any information
 about SVM performance on the given dataset other than the cvxopt
 implementation, the expected accuracy is \(96.84\%\). According to
 Markov inequality then, \(\displaystyle P[\text{acc}\ge 97.23]\le
-\frac{96.84}{97.23}=0.9959\). That is to sat, this is not such a rare event.
+\frac{96.84}{97.23}=0.9959\). That is to say, this is not such a rare event.
 
 \par The testing time is 1.5 minutes. Training time is around 3
 minutes. Around 25 times faster.
