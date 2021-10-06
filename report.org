@@ -1,4 +1,6 @@
-#+AUTHOR: Mridul Gupta \\ 2021AIZ8322
+#+TITLE: COL774 Assignment 2
+#+AUTHOR: Mridul Gupta (AIZ218322)
+#+DATE: Wednesday 06 October 2021
 #+OPTION: toc:nil
 * Q1
 
@@ -48,17 +50,18 @@
 
 ** Q1(e)
 #+CAPTION: Frequencies of words
-[[/home/mridul/scai/ml/hw2/src/q1/freq_boxplot.png]]
-Features used was review lengths discretized to four buckets based on
-boxplot of classwise lengths plotted. Also, since most of the reviews
-have \(<400\) words after removal of stop words but some reviews go on
-to contain around 2500 words. We have a lot of data, so in this step I
-do not process examples that contain more than 400 words. This can be
+[[/home/mridul/scai/ml/hw2/src/q1/freq_boxplot.png]] Features used was
+review lengths discretized to four buckets based on boxplot of
+classwise lengths plotted. Also, since most of the reviews have
+\(<400\) words after removal of stop words but some reviews go on to
+contain around 2500 words. We have a lot of data, so in this step I do
+not process examples that contain more than 400 words. This can be
 seen as a meta feature, to avoid overfitting. I tested with n-gram
-extractions, but it was taking a lot of time to build the vocabulary,
-so I had to terminate the code. The accuracy is no still around
-\(65\%\) but there is some speed gain as we are not processing long
-reviews.
+extractions, but it was taking a lot of time to train and I didn't
+have the resources. So, I ran the n-gram with n=5 on a smaller
+dataset, and the accuracy decreased. I didn't pursue it further. The
+accuracy is no still around \(65\%\) but there is some speed gain as
+we are not processing long reviews.
 
 ** Q1(f)
 The class-wise F1-scores and macro F1-score are:
