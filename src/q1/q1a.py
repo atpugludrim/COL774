@@ -10,11 +10,11 @@ class AttributeNotFound(Exception):
 
 class DummyFile:
     def write(this,s):pass
-    def flush(this,s):pass
+    def flush(this,*args):pass
 
 class silentcontext:
-    def __init__(this,verbose=False):
-        this.verbose = verbose
+    def __init__(this,silent):
+        this.verbose = not silent
 
     def __enter__(this):
         if this.verbose:
@@ -69,19 +69,17 @@ class tree_node:
         else:
             return None
     def disc_decide(this,x):
-        if this.attrib not in x.columns:
+        if x[this.attrib] not in this.disc_splits:
             raise AttributeNotFound()
         return this.disc_splits[x[this.attrib]]
     def cont_decide(this,x):
-        if this.attrib not in x.columns:
-            raise AttributeNotFound()
         if x[this.attrib] < this.cont_th:
             return this.children[0]
         else:
             return this.children[1]
 
 def growtree(xdf,ydf):
-    root = recursive_grow_tree(xdf,ydf,3)
+    root = recursive_grow_tree(xdf,ydf,8)
     return root
 
 def recursive_grow_tree(xdf,ydf,maxleaf):# MAX RECURSION DEPTH REACHED, MAKE THIS ITERATIVE
@@ -100,7 +98,7 @@ def recursive_grow_tree(xdf,ydf,maxleaf):# MAX RECURSION DEPTH REACHED, MAKE THI
     best_attrib_th = None
     best_attrib_type = None
     y = ydf.values
-    with silentcontext():
+    with silentcontext(True):
         for j in xdf.columns:
             if j == 'balance' or j == 'duration':# THIS HAS TO BE REMOVED
                 continue
@@ -236,8 +234,8 @@ def test(root, xdf, ydf):
 
 @timeitdecorator
 def main():
-    df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_train.csv',delimiter=';')
-    #df = pd.read_csv('/home/anupam/Desktop/backups/COL774/src/q1/test.csv',delimiter=';')
+    #df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_train.csv',delimiter=';')
+    df = pd.read_csv('/home/anupam/Desktop/backups/COL774/src/q1/test.csv',delimiter=';')
     xdf = df.iloc[:,:-1]
     ydf = df.iloc[:,-1]
 
