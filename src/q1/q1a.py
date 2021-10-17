@@ -82,11 +82,16 @@ def growtree(xdf,ydf):
     root = recursive_grow_tree(xdf,ydf,8)
     return root
 
+counter = 0
 def recursive_grow_tree(xdf,ydf,maxleaf):# MAX RECURSION DEPTH REACHED, MAKE THIS ITERATIVE
     # checkleafcondition()# and make leaf
+    global counter
+    counter += 1
+    print("Node:",counter)
     if len(np.unique(ydf)) == 1:
         print("\n","*"*30,"Leaf created","*"*30,"\n")
         return tree_node(_type = 'leaf', leaf_cl = ydf.values[0])
+
     if ydf.shape[0] <= maxleaf: # BECAUSE TWO OF ONE CLASS EACH WAS CAUSING INFINITE LOOP
         print("\n","*"*30,"Leaf created","*"*30,"\n")
         y_levels,count = np.unique(ydf,return_counts=True)
@@ -234,8 +239,8 @@ def test(root, xdf, ydf):
 
 @timeitdecorator
 def main():
-    #df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_train.csv',delimiter=';')
-    df = pd.read_csv('/home/anupam/Desktop/backups/COL774/src/q1/test.csv',delimiter=';')
+    df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_train.csv',delimiter=';')
+    #df = pd.read_csv('/home/anupam/Desktop/backups/COL774/src/q1/test.csv',delimiter=';')
     xdf = df.iloc[:,:-1]
     ydf = df.iloc[:,-1]
 
