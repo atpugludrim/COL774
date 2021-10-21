@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from collections import OrderedDict
 
-sys.setrecursionlimit(3000)
+sys.setrecursionlimit(3000) # i'm growing in dfs manner, must use a queue and bfs manner to take care of this, but i'm low on time and this works for now so leaving it
 class AttributeNotFound(Exception):
     pass
 
@@ -58,11 +58,11 @@ class tree_node:
 
     def __init__(this,_type=None,attrib=None,disc_splits=None,cont_th=None,leaf_cl=None,_empty_leaf=False,num_samples=0,depth=0):
         this._type = _type
-        this.depth=depth
         this.attrib = attrib
         this.disc_splits = disc_splits# will be a dictionary
         this.cont_th = cont_th
         this.leaf_cl = leaf_cl
+        this.depth=depth
         this.num_samples = num_samples
         this._empty_leaf = _empty_leaf
         this.children = []# will only have two children to be used for continuous splitting
@@ -155,9 +155,9 @@ def recursive_grow_tree(xdf,ydf,maxleaf,depth):# MAX RECURSION DEPTH REACHED, MA
         for l in x_levels:
             ind = xdf[best_attrib]==l
             disc_splits[l] = recursive_grow_tree(xdf[ind],ydf[ind],maxleaf,depth+1)
-        root = tree_node(_type=best_attrib_type,disc_splits=disc_splits,attrib=best_attrib,leaf_cl=max_c,depth=depth)
+        root = tree_node(_type=best_attrib_type,disc_splits=disc_splits,attrib=best_attrib,depth=depth,leaf_cl=max_c)
     elif best_attrib_type == 'cont':# add left and right child
-        root = tree_node(_type=best_attrib_type,cont_th=best_attrib_th,attrib=best_attrib,leaf_cl=max_c,depth=depth)
+        root = tree_node(_type=best_attrib_type,cont_th=best_attrib_th,attrib=best_attrib,depth=depth,leaf_cl=max_c)
 
         ind = xdf[best_attrib] < best_attrib_th
         root.add_child(recursive_grow_tree(xdf[ind],ydf[ind],maxleaf,depth+1))#left child
@@ -370,32 +370,43 @@ def findmaxdepth(root):
                 rec(r.disc_splits[c])
     rec(root)
     return md
-
 @timeitdecorator
 def main():
     df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_train.csv',delimiter=';')
     xdf = df.iloc[:,:-1]
+    xdf_one_hot = pd.get_dummies(xdf)
     ydf = df.iloc[:,-1]
 
-    root = growtree(xdf, ydf)
+    root = growtree(xdf_one_hot, ydf)
     max_depth = findmaxdepth(root)
 
     node_counts = count_nodes_upto_depth(root, max_depth+1)
 
     df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_test.csv',delimiter=';')
     xdf_test = df.iloc[:,:-1]
+    xdf_test_one_hot = pd.get_dummies(xdf_test)
+    missing_cols = set(xdf_one_hot.columns) - set(xdf_test_one_hot.columns)
+    for c in missing_cols:
+        xdf_test_one_hot[c] = 0
+    xdf_test_one_hot = xdf_test_one_hot[xdf_one_hot.columns]
     ydf_test = df.iloc[:,-1]
+
 
     df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_val.csv',delimiter=';')
     xdf_val = df.iloc[:,:-1]
+    xdf_val_one_hot = pd.get_dummies(xdf_val)
+    missing_cols = set(xdf_one_hot.columns) - set(xdf_val_one_hot.columns)
+    for c in missing_cols:
+        xdf_val_one_hot[c] = 0
+    xdf_val_one_hot = xdf_val_one_hot[xdf_one_hot.columns]
     ydf_val = df.iloc[:,-1]
-
+    
     print("Train")
-    train_accs = get_acc_upto_depth(root, max_depth+1, xdf, ydf)
+    train_accs = get_acc_upto_depth(root, max_depth+1, xdf_one_hot, ydf)
     print("Test")
-    test_accs = get_acc_upto_depth(root, max_depth+1, xdf_test, ydf_test)
+    test_accs = get_acc_upto_depth(root, max_depth+1, xdf_test_one_hot, ydf_test)
     print("Val")
-    val_accs = get_acc_upto_depth(root, max_depth+1, xdf_val, ydf_val)
+    val_accs = get_acc_upto_depth(root, max_depth+1, xdf_val_one_hot, ydf_val)
 
     plt.plot(node_counts[1:],list(train_accs.values()),label='Training accuracies')
     plt.plot(node_counts[1:],list(test_accs.values()),label='Test accuracies')
@@ -403,9 +414,8 @@ def main():
     plt.xlabel('Number of nodes in the tree')
     plt.ylabel('Accuracy(in %)')
     plt.legend()
-    plt.savefig('Accuracies_without_onehot.png')
-    #plt.show()
-    # y_hat,y = test2(root,xdf,ydf)
+    plt.savefig('Accuracies_with_onehot.png')
+    # y_hat,y = test2(root,xdf_test_one_hot,ydf)
     # print(np.sum(y==y_hat)/y.shape[0])
 
 if __name__ == "__main__":

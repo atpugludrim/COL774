@@ -23,21 +23,26 @@ class silentcontext:
             return
         this.stdo = sys.stdout
         sys.stdout = DummyFile()
+        this.stde = sys.stderr
+        sys.stderr = DummyFile()
 
     def __exit__(this,exc_type,exc_value,traceback):
         if this.verbose:
             return
         sys.stdout = this.stdo
+        sys.stderr = this.stde
 
 def silentdecorator(flag):
     def actualdecorator(func):
         def f(*args):
             if flag:
                 stdo = sys.stdout
+                stde = sys.stderr
                 sys.stdout = DummyFile()
             ret = func(*args)
             if flag:
                 sys.stdout = stdo
+                sys.stderr = stde
             return ret
         return f
     return actualdecorator
@@ -56,7 +61,7 @@ class tree_node:
     def __len__(this):
         return 0
 
-    def __init__(this,_type=None,attrib=None,disc_splits=None,cont_th=None,leaf_cl=None,_empty_leaf=False,num_samples=0,depth=0):
+    def __init__(this,_type=None,attrib=None,disc_splits=None,cont_th=None,leaf_cl=None,_empty_leaf=False,num_samples=0,depth=0,pruned=False):
         this._type = _type
         this.depth=depth
         this.attrib = attrib
@@ -65,10 +70,13 @@ class tree_node:
         this.leaf_cl = leaf_cl
         this.num_samples = num_samples
         this._empty_leaf = _empty_leaf
+        this.pruned = False
         this.children = []# will only have two children to be used for continuous splitting
     def add_child(this, child):# add left child first and then right
         this.children.append(child)
     def decide(this,x=None,test2=False):
+        if this.pruned:
+            return this.leaf_cl
         if this._type == 'leaf':
             if this._empty_leaf:
                 global classes
@@ -371,16 +379,46 @@ def findmaxdepth(root):
     rec(root)
     return md
 
+def getbatchind(l,bs):
+    return np.random.permutation(l)[:bs]
+
+def prune(root, xdf_val, ydf_val):
+    bs = 400
+    bs = max(0,min(bs,len(xdf_val)))
+    def prne(groot):
+        nonlocal xdf_val, ydf_val, root, bs
+        if len(groot.children) > 0:
+            for c in groot.children:
+                prne(c)
+        elif groot.disc_splits is not None and len(groot.disc_splits) > 0:
+            for c in groot.disc_splits:
+                prne(groot.disc_splits[c])
+        ind = getbatchind(len(xdf_val),bs)
+        xdf_b = xdf_val.iloc[ind]
+        ydf_b = ydf_val.iloc[ind]
+        # BEFORE PRUNING
+        y_hat, y = test2(root, xdf_b, ydf_b)
+        acc = np.sum(y_hat==y)
+        # AFTER PRUNING
+        groot.pruned = True
+        y_hat, y = test2(root, xdf_b, ydf_b)
+        acc_pr = np.sum(y_hat==y)
+        
+        if acc_pr < acc:
+            groot.pruned = False
+    prne(root)
+
 @timeitdecorator
+@silentdecorator(True)
 def main():
     df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_train.csv',delimiter=';')
     xdf = df.iloc[:,:-1]
     ydf = df.iloc[:,-1]
 
     root = growtree(xdf, ydf)
-    max_depth = findmaxdepth(root)
+    # max_depth = findmaxdepth(root)
 
-    node_counts = count_nodes_upto_depth(root, max_depth+1)
+    # node_counts = count_nodes_upto_depth(root, max_depth+1)
 
     df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_test.csv',delimiter=';')
     xdf_test = df.iloc[:,:-1]
@@ -390,21 +428,31 @@ def main():
     xdf_val = df.iloc[:,:-1]
     ydf_val = df.iloc[:,-1]
 
-    print("Train")
-    train_accs = get_acc_upto_depth(root, max_depth+1, xdf, ydf)
-    print("Test")
-    test_accs = get_acc_upto_depth(root, max_depth+1, xdf_test, ydf_test)
-    print("Val")
-    val_accs = get_acc_upto_depth(root, max_depth+1, xdf_val, ydf_val)
+    y_hat, y = test2(root, xdf_test, ydf_test)
+    acc = np.sum(y_hat==y)/y.shape[0]
+    f = open("pruning_accuracies_on_test_set.txt","w")
+    f.write("Before pruning: {}\n".format(acc))
+    prune(root, xdf_val, ydf_val)
+    y_hat, y = test2(root, xdf_test, ydf_test)
+    acc_pr = np.sum(y_hat==y)/y.shape[0]
+    f.write("{} {}".format(acc,acc_pr))
+    f.close()
 
-    plt.plot(node_counts[1:],list(train_accs.values()),label='Training accuracies')
-    plt.plot(node_counts[1:],list(test_accs.values()),label='Test accuracies')
-    plt.plot(node_counts[1:],list(val_accs.values()),label='Validation accuracies')
-    plt.xlabel('Number of nodes in the tree')
-    plt.ylabel('Accuracy(in %)')
-    plt.legend()
-    plt.savefig('Accuracies_without_onehot.png')
-    #plt.show()
+    # print("Train")
+    # train_accs = get_acc_upto_depth(root, max_depth+1, xdf, ydf)
+    # print("Test")
+    # test_accs = get_acc_upto_depth(root, max_depth+1, xdf_test, ydf_test)
+    # print("Val")
+    # val_accs = get_acc_upto_depth(root, max_depth+1, xdf_val, ydf_val)
+
+    # plt.plot(node_counts[1:],list(train_accs.values()),label='Training accuracies')
+    # plt.plot(node_counts[1:],list(test_accs.values()),label='Test accuracies')
+    # plt.plot(node_counts[1:],list(val_accs.values()),label='Validation accuracies')
+    # plt.xlabel('Number of nodes in the tree')
+    # plt.ylabel('Accuracy(in %)')
+    # plt.legend()
+    # plt.savefig('Accuracies_without_onehot.png')
+    # plt.show()
     # y_hat,y = test2(root,xdf,ydf)
     # print(np.sum(y==y_hat)/y.shape[0])
 
