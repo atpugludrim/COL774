@@ -8,8 +8,6 @@ class Op:
         for inp_n in this.inp:
             inp_n.cons.append(this)
 
-        _default_graph.ops.append(this)
-
     def compute(this):
         pass
 
@@ -28,22 +26,10 @@ class matmul(Op):
 class placeholder:
     def __init__(this):
         this.cons = []
-        _default_graph.placeholders.append(this)
-
 class variable:
     def __init__(this, init_val = None):
         this.val = init_val
         this.cons = []
-        _default_graph.variables.append(this)
-
-class Graph:
-    def __init__(this):
-        this.ops = []
-        this.variables = []
-        this.placeholders = []
-    def asdefault(this):
-        global _default_graph
-        _default_graph = this
 
 class Session:
     def traverse_postorder(this, op):
