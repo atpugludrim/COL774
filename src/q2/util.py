@@ -166,7 +166,7 @@ def compute_gradients(loss):
 
 @RegisterGradient("ReLU")
 def relu_pr(op, grad):
-    return grad * np.where(op.inputs[0]>=0,1,0)
+    return grad * np.where(op.inputs[0]>0,1,0)
 
 @RegisterGradient("negative")
 def neg_pr(op, grad):
