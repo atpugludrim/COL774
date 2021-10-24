@@ -8,8 +8,12 @@ test_path = '/home/anupam/Desktop/backups/COL774/data/q2/poker-hand-testing.data
 
 def main():
     df_train = pd.read_csv(train_path, header=None)
+    # xdf_train = df_train.iloc[:,:-1]
+    # ydf_train = df_train.iloc[:,-1]
 
     df_test = pd.read_csv(test_path, header=None)
+    # xdf_test = df_test.iloc[:,:-1]
+    # ydf_test = df_test.iloc[:,-1]
 
     df_train['train'] = 1
     df_test['train'] = 0

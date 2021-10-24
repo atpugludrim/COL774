@@ -38,13 +38,6 @@ class DataLoader:
                 yield this.xs[start_ind:end_ind,...], this.ys[start_ind:end_ind,...]
         return _iter()
 
-class Scaler:
-    def __init__(this, mu, std):
-        this.mu = mu
-        this.std = std
-    def transform(this, data):
-        return (data - this.mu)/this.std
-
 def make_mlp_model(n,n_neurons,r,X,y):
     W = [variable(np.random.randn(n,n_neurons[0]))]
     b = [variable(np.random.randn(n_neurons[0]))]
@@ -55,7 +48,8 @@ def make_mlp_model(n,n_neurons,r,X,y):
         h.append(sigmoid(add(matmul(h[-1],W[-1]),b[-1])))
     W.append(variable(np.random.randn(n_neurons[-1],r)))
     b.append(variable(np.random.randn(r)))
-    h.append(softmax(add(matmul(h[-1],W[-1]),b[-1])))
+    # h.append(softmax(add(matmul(h[-1],W[-1]),b[-1])))
+    h.append(sigmoid(add(matmul(h[-1],W[-1]),b[-1])))
     return W,b,h
 
 def test(x_test, y_test, den):#, W, b):
@@ -67,7 +61,8 @@ def test(x_test, y_test, den):#, W, b):
     h = x_test
     for w,b in zip(W_vals[:-1],b_vals[:-1]):
         h = sigmoid_(h@w+b)
-    o = softmax_(h@W_vals[-1]+b_vals[-1])
+    o = sigmoid_(h@W_vals[-1]+b_vals[-1])
+    # o = softmax_(h@W_vals[-1]+b_vals[-1])
     y_hat = np.argmax(o,axis=1)
     y_test_ = np.argmax(y_test,axis=1)
     return np.sum(y_hat==y_test_)/den
@@ -84,26 +79,26 @@ def main():
     y_val = df.iloc[:,-10:].values
     den = len(x_val)
 
-    bs = 128
-    scaler = Scaler(x_train.mean(axis=0),x_train.std(axis=0))
-    x_train = scaler.transform(x_train)
-    x_val = scaler.transform(x_val)
+    bs = 100
     dl = DataLoader(x_train, y_train, bs)
 
     X = placeholder()
     Y = placeholder()
     W, b, h = make_mlp_model(85,[100],10,X,Y)
     y_hat = h[-1]
-    J = negative(reduce_sum(reduce_sum(multiply(Y,log(y_hat)),axis=1)))
-    minimization_op = SGDOptimizer(lr=0.003).minimize(J)
+    # J = negative(reduce_sum(reduce_sum(multiply(Y,log(y_hat)),axis=1)))
+    m2 = constant(1/(2*bs))
+    J = multiply(m2,reduce_sum(reduce_sum(square(add(Y,negative(y_hat))),axis=1)))
+    # minimization_op = SGDOptimizer(lr=0.003).minimize(J)
+    minimization_op = SGDOptimizer(lr=0.1).minimize(J)
 
     session = Session()
 
     js = []
     ns = 33
     converged = False
-    epoch = 400
-    eps = 1e-9
+    epoch = 1000
+    eps = 1e-30
     # val_acc = 0
     # patience = 0
     # max_patience = bs
@@ -112,9 +107,10 @@ def main():
         for i, (x, y) in enumerate(dl.get_iterator()):
             feed_dict = {X:x,Y:y}
             J_val = session.run(J, feed_dict) # forward propagation
-            js.append(J_val/bs)
+            # js.append(J_val/bs)
+            js.append(J_val)
             if (step == 1 or not step % 100) and i == 1:
-                print("Step:",step,"loss:",J_val/bs)# normalize by batch size
+                print("Step:",step,"loss:",J_val)# normalize by batch size
             #############################################################
             # W_vals = [w.val for w in W]
             # b_vals = [b_.val for b_ in b]
@@ -145,8 +141,6 @@ def main():
     x_test = df.iloc[:,:-10].values
     y_test = df.iloc[:,-10:].values
     den = len(x_test)
-
-    x_test = scaler.transform(x_test)
 
     W_vals = [w.val for w in W]
     b_vals = [b_.val for b_ in b]

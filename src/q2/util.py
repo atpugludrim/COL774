@@ -26,6 +26,10 @@ class matmul(Op):
 class placeholder:
     def __init__(this):
         this.cons = []
+class constant:
+    def __init__(this,val):
+        this.cons = []
+        this.val = val
 class variable:
     def __init__(this, init_val = None):
         this.val = init_val
@@ -47,7 +51,7 @@ class Session:
         for n in nodes_postorder:
             if type(n) == placeholder:
                 n.output = feed_dict[n]
-            elif type(n) == variable:
+            elif type(n) == variable or type(n) == constant:
                 n.output = n.val
             else:
                 n.inputs = [i.output for i in n.inp] # concrete values, not abstract nodes
@@ -92,6 +96,18 @@ class negative(Op):
         super().__init__([b])
     def compute(this, b_val):
         return -b_val
+
+class square(Op):
+    def __init__(this, x):
+        super().__init__([x])
+    def compute(this, x_val):
+        return np.square(x_val)
+
+class ReLU(Op):
+    def __init__(this, x):
+        super().__init__([x])
+    def compute(this, x_val):
+        return np.maximum(0,x_val)
 
 class SGDOptimizer:
     def __init__(this, lr):
@@ -147,6 +163,10 @@ def compute_gradients(loss):
                     visited.add(inp_n)
                     queue.put(inp_n) # bfs
     return gt
+
+@RegisterGradient("ReLU")
+def relu_pr(op, grad):
+    return grad * np.where(op.inputs[0]>=0,1,0)
 
 @RegisterGradient("negative")
 def neg_pr(op, grad):
@@ -209,3 +229,7 @@ def redsm_pr(op, gr):
 def sm_pr(op,gr):
     sm = op.output
     return (gr - np.reshape(np.sum(gr*sm,1),[-1,1]))*sm
+
+@RegisterGradient("square")
+def sq_pr(op, gr):
+    return gr * 2 * op.inputs[0]

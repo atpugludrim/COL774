@@ -1,0 +1,17 @@
+#+AUTHOR: Mridul Gupta(AIZ218322)
+#+TITLE: COL774 Assignment 3
+#+OPTIONS: toc:nil
+* Q1
+** Q1(a)
+** Q1(b)
+** Q1(c)
+** Q1(d)
+
+*Q2
+** Q2(a)
+** Q2(b)
+** Q2(c)
+** Q2(d)
+** Q2(e)
+** Q2(f)
+** Q2(g)
