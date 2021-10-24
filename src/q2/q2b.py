@@ -25,7 +25,7 @@ class DataLoader:
             this.ys = np.array(ys)
         this.bs = bs
     def shuffle(this):
-        ind = np.random.premutation(this.xs.shape[0])
+        ind = np.random.permutation(this.xs.shape[0])
         this.xs = this.xs[ind]
         this.ys = this.ys[ind]
     def get_iterator(this):
@@ -81,6 +81,7 @@ def main():
 
     bs = 100
     dl = DataLoader(x_train, y_train, bs)
+    dl.shuffle()
 
     X = placeholder()
     Y = placeholder()

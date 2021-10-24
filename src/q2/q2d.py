@@ -75,7 +75,8 @@ def train(hla,bs,lr,epoch,eps):
     # J = negative(reduce_sum(reduce_sum(multiply(Y,log(y_hat)),axis=1)))
     m2 = constant(1/(2*bs))
     J = multiply(m2,reduce_sum(reduce_sum(square(add(Y,negative(y_hat))),axis=1)))
-    minimization_op = SGDOptimizer(lr=lr).minimize(J)
+    opt = SGDOptimizer(lr=lr)
+    minimization_op = opt.minimize(J)
 
     session = Session()
     js = []
@@ -83,6 +84,7 @@ def train(hla,bs,lr,epoch,eps):
     converged = False
     s = time.time()
     for step in range(1,1+epoch):
+        opt.lr = lr/np.sqrt(step)
         for i, (x, y) in enumerate(dl.get_iterator()):
             feed_dict = {X:x,Y:y}
             J_val = session.run(J, feed_dict) # forward propagation
@@ -164,7 +166,7 @@ def main():
     y_test = df.iloc[:,-10:].values
 
     hlas = [_ for _ in range(5,26,5)]
-    hlas.append(100)
+    # hlas.append(100)
 
     times, acc, = [], []
     for hla in hlas:

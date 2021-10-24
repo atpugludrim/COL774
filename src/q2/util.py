@@ -64,7 +64,7 @@ class sigmoid(Op):
     def __init__(this, z):
         super().__init__([z])
     def compute(this, z_val):
-        return 1/(1+np.exp(-z_val))
+        return np.where(z_val<0,np.exp(z_val)/(1+np.exp(z_val)),1/(1+np.exp(-z_val)))
 
 class softmax(Op):
     def __init__(this, z):

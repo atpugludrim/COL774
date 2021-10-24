@@ -38,6 +38,20 @@ class DataLoader:
                 yield this.xs[start_ind:end_ind,...], this.ys[start_ind:end_ind,...]
         return _iter()
 
+# def make_mlp_model(n,n_neurons,r,X,y):
+#     W = [variable(np.random.randn(n,n_neurons[0]))]
+#     b = [variable(np.random.randn(n_neurons[0]))]
+#     h = [ReLU(add(matmul(X,W[-1]),b[-1]))]
+#     for idx in range(1,len(n_neurons)):
+#         W.append(variable(np.random.randn(n_neurons[idx-1],n_neurons[idx])))
+#         b.append(variable(np.random.randn(n_neurons[idx])))
+#         h.append(ReLU(add(matmul(h[-1],W[-1]),b[-1])))
+#     W.append(variable(np.random.randn(n_neurons[-1],r)))
+#     b.append(variable(np.random.randn(r)))
+#     # h.append(softmax(add(matmul(h[-1],W[-1]),b[-1])))
+#     h.append(sigmoid(add(matmul(h[-1],W[-1]),b[-1])))
+#     return W,b,h
+
 def make_mlp_model(n,n_neurons,r,X,y):
     W = [variable(np.random.randn(n,n_neurons[0]))]
     b = [variable(np.random.randn(n_neurons[0]))]
@@ -57,6 +71,8 @@ def test(x_test, y_test, W_vals, b_vals):
         return 1/(1+np.exp(-z))
     def softmax_(z):
         return np.exp(z)/np.sum(np.exp(z),axis=1)[:,None]
+    def relu(z):
+        return np.maximum(0,z)
     h = x_test
     for w,b in zip(W_vals[:-1],b_vals[:-1]):
         h = sigmoid_(h@w+b)
@@ -75,7 +91,8 @@ def train(hla,bs,lr,epoch,eps):
     # J = negative(reduce_sum(reduce_sum(multiply(Y,log(y_hat)),axis=1)))
     m2 = constant(1/(2*bs))
     J = multiply(m2,reduce_sum(reduce_sum(square(add(Y,negative(y_hat))),axis=1)))
-    minimization_op = SGDOptimizer(lr=lr).minimize(J)
+    opt = SGDOptimizer(lr=lr)
+    minimization_op = opt.minimize(J)
 
     session = Session()
     js = []
@@ -83,6 +100,7 @@ def train(hla,bs,lr,epoch,eps):
     converged = False
     s = time.time()
     for step in range(1,1+epoch):
+        opt.lr = lr/np.sqrt(step)
         for i, (x, y) in enumerate(dl.get_iterator()):
             feed_dict = {X:x,Y:y}
             J_val = session.run(J, feed_dict) # forward propagation
@@ -159,27 +177,29 @@ def main():
     dl = DataLoader(x_train, y_train, bs)
     dl.shuffle()
 
+    # df = pd.read_csv('val.csv',header=None)
     df = pd.read_csv('test.csv',header=None)
     x_test = df.iloc[:,:-10].values
     y_test = df.iloc[:,-10:].values
 
-    hlas = [_ for _ in range(5,26,5)]
-    hlas.append(100)
+    # hlas = [_ for _ in range(5,26,5)]
+    # hlas.append(100)
+    hlas = ["100_100_relu"]
 
     times, acc, = [], []
     for hla in hlas:
-        a, t, y_hat, y_tru = train([hla],bs,0.1,1400,-float('inf'))
+        a, t, y_hat, y_tru = train([100,100],bs,0.1,1400,-float('inf'))
         times.append(t)
-        acc.append(a*100)
+        acc.append(a)
         make_conf_mat(y_hat, y_tru, "hidden_{}.png".format(hla))
-    fig=plt.figure()
-    plt.plot(hlas,times,label='times')
-    plt.savefig('times.png')
-    plt.close(fig)
-    fig=plt.figure()
-    plt.plot(hlas,acc,label='acc')
-    plt.savefig('acc.png')
-    plt.close(fig)
+    # fig=plt.figure()
+    # plt.plot(hlas,times,label='times')
+    # plt.savefig('times.png')
+    # plt.close(fig)
+    # fig=plt.figure()
+    # plt.plot(hlas,acc,label='acc')
+    # plt.savefig('acc.png')
+    # plt.close(fig)
 
 if __name__=="__main__":
     main()
