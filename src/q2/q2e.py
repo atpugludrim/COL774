@@ -39,12 +39,12 @@ class DataLoader:
         return _iter()
 
 # def make_mlp_model(n,n_neurons,r,X,y):
-#     W = [variable(np.random.randn(n,n_neurons[0]))]
-#     b = [variable(np.random.randn(n_neurons[0]))]
+#     W = [variable(np.random.randn(n,n_neurons[0])*0.1)]
+#     b = [variable(np.random.randn(n_neurons[0])*0.01)]
 #     h = [ReLU(add(matmul(X,W[-1]),b[-1]))]
 #     for idx in range(1,len(n_neurons)):
-#         W.append(variable(np.random.randn(n_neurons[idx-1],n_neurons[idx])))
-#         b.append(variable(np.random.randn(n_neurons[idx])))
+#         W.append(variable(np.random.randn(n_neurons[idx-1],n_neurons[idx])*0.1))
+#         b.append(variable(np.random.randn(n_neurons[idx])*0.01))
 #         h.append(ReLU(add(matmul(h[-1],W[-1]),b[-1])))
 #     W.append(variable(np.random.randn(n_neurons[-1],r)))
 #     b.append(variable(np.random.randn(r)))
@@ -66,6 +66,20 @@ def make_mlp_model(n,n_neurons,r,X,y):
     h.append(sigmoid(add(matmul(h[-1],W[-1]),b[-1])))
     return W,b,h
 
+# def make_mlp_model(n,n_neurons,r,X,y):
+#     W = [variable(np.random.uniform(-1/np.sqrt(n),1/np.sqrt(n),(n,n_neurons[0])))]
+#     b = [variable(np.random.randn(n_neurons[0])*0.01)]
+#     h = [sigmoid(add(matmul(X,W[-1]),b[-1]))]
+#     for idx in range(1,len(n_neurons)):
+#         W.append(variable(np.random.uniform(-1/np.sqrt(n_neurons[idx-1]),1/np.sqrt(n_neurons[idx-1]),(n_neurons[idx-1],n_neurons[idx]))))
+#         b.append(variable(np.random.randn(n_neurons[idx])*0.01))
+#         h.append(sigmoid(add(matmul(h[-1],W[-1]),b[-1])))
+#     W.append(variable(np.random.randn(n_neurons[-1],r)))
+#     b.append(variable(np.random.randn(r)))
+#     # h.append(softmax(add(matmul(h[-1],W[-1]),b[-1])))
+#     h.append(sigmoid(add(matmul(h[-1],W[-1]),b[-1])))
+#     return W,b,h
+
 def test(x_test, y_test, W_vals, b_vals):
     def sigmoid_(z):
         return 1/(1+np.exp(-z))
@@ -76,6 +90,7 @@ def test(x_test, y_test, W_vals, b_vals):
     h = x_test
     for w,b in zip(W_vals[:-1],b_vals[:-1]):
         h = sigmoid_(h@w+b)
+        # h = relu(h@w+b)
     o = sigmoid_(h@W_vals[-1]+b_vals[-1])
     # o = softmax_(h@W_vals[-1]+b_vals[-1])
     y_hat = np.argmax(o,axis=1)
@@ -184,7 +199,7 @@ def main():
 
     # hlas = [_ for _ in range(5,26,5)]
     # hlas.append(100)
-    hlas = ["100_100_relu"]
+    hlas = ["100_100"]
 
     times, acc, = [], []
     for hla in hlas:
