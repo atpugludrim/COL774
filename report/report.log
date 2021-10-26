@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.8.16)  26 OCT 2021 19:06
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.8.16)  26 OCT 2021 19:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -377,14 +377,14 @@ LaTeX Font Info:    ... okay on input line 28.
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(108.405pt, 433.62001pt, 72.26999pt)
+* h-part:(L,W,R)=(86.72377pt, 440.84746pt, 86.72377pt)
 * v-part:(T,H,B)=(95.39737pt, 556.47656pt, 143.09605pt)
 * \paperwidth=614.295pt
 * \paperheight=794.96999pt
-* \textwidth=433.62001pt
+* \textwidth=440.84746pt
 * \textheight=556.47656pt
-* \oddsidemargin=36.13501pt
-* \evensidemargin=36.13501pt
+* \oddsidemargin=14.45378pt
+* \evensidemargin=14.45378pt
 * \topmargin=-13.87262pt
 * \headheight=12.0pt
 * \headsep=25.0pt
@@ -456,7 +456,7 @@ phic file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q1/Accuracies_with_onehot.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q1/Accuracies_
 with_onehot.png  used on input line 38.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q1/Accuracies_without_onehot.png, id=5
 8, 462.528pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q1/Accuracies_without_onehot.png 
@@ -464,7 +464,7 @@ Graphic file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q1/Accuracies_without_onehot.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q1/Accuracies_
 without_onehot.png  used on input line 41.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 
 Overfull \hbox (7.26106pt too wide) in paragraph at lines 38--42
 [][][] 
@@ -476,16 +476,11 @@ Overfull \hbox (7.26106pt too wide) in paragraph at lines 38--42
 pam/Desktop/backups/COL774/src/q1/Accuracies_with_onehot.png> </home/anupam/Des
 ktop/backups/COL774/src/q1/Accuracies_without_onehot.png>]
 LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 6
-8.
+7.
 
 (/home/anupam/.TinyTeX/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
-Overfull \hbox (49.12073pt too wide) in paragraph at lines 66--71
-\T1/cmr/m/n/10.95 The best pa-ram-e-ters ob-tained were \T1/cmtt/m/n/10.95 n_es
-timators: 100, max_features:0.9, min_samples_split:
- []
-
 </home/anupam/Desktop/backups/COL774/src/q1/sensitivity_n_estimators.png, id=74
 , 462.528pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q1/sensitivity_n_estimators.png G
@@ -493,7 +488,7 @@ raphic file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q1/sensitivity_n_estimators.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q1/sensitivity
 _n_estimators.png  used on input line 76.
-(pdftex.def)             Requested size: 238.49232pt x 178.8731pt.
+(pdftex.def)             Requested size: 242.46744pt x 181.85316pt.
 </home/anupam/Desktop/backups/COL774/src/q1/sensitivity_max_features.png, id=75
 , 462.528pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q1/sensitivity_max_features.png G
@@ -501,9 +496,9 @@ raphic file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q1/sensitivity_max_features.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q1/sensitivity
 _max_features.png  used on input line 79.
-(pdftex.def)             Requested size: 238.49232pt x 178.8731pt.
+(pdftex.def)             Requested size: 242.46744pt x 181.85316pt.
 
-Overfull \hbox (50.62572pt too wide) in paragraph at lines 76--80
+Overfull \hbox (51.3485pt too wide) in paragraph at lines 76--80
 [][][] 
  []
 
@@ -520,7 +515,7 @@ png Graphic file (type png)
 ng>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q1/sensitivity
 _min_samples_split.png  used on input line 83.
-(pdftex.def)             Requested size: 260.17465pt x 195.1391pt.
+(pdftex.def)             Requested size: 264.51115pt x 198.39441pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup/acc.png, id=79, 462.528pt x 
 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup/acc.png Graphic file (t
@@ -528,7 +523,7 @@ ype png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup/acc.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup/acc.
 png  used on input line 109.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup/times.png, id=80, 462.528pt 
 x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup/times.png Graphic file 
@@ -536,7 +531,7 @@ File: /home/anupam/Desktop/backups/COL774/src/q2/backup/times.png Graphic file
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup/times.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup/time
 s.png  used on input line 112.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 
 Overfull \hbox (7.26106pt too wide) in paragraph at lines 109--113
 [][][] 
@@ -549,7 +544,7 @@ le (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_5.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup/hidd
 en_5.png  used on input line 118.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_10.png, id=82, 462.52
 8pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_10.png Graphic f
@@ -557,7 +552,7 @@ ile (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_10.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup/hidd
 en_10.png  used on input line 121.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_15.png, id=83, 462.52
 8pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_15.png Graphic f
@@ -565,7 +560,7 @@ ile (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_15.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup/hidd
 en_15.png  used on input line 124.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_20.png, id=84, 462.52
 8pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_20.png Graphic f
@@ -573,7 +568,7 @@ ile (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_20.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup/hidd
 en_20.png  used on input line 127.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_25.png, id=85, 462.52
 8pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_25.png Graphic f
@@ -581,7 +576,7 @@ ile (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_25.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup/hidd
 en_25.png  used on input line 130.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_100.png, id=86, 462.5
 28pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_100.png Graphic 
@@ -589,7 +584,7 @@ file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup/hidden_100.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup/hidd
 en_100.png  used on input line 133.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 
 Overfull \hbox (7.26106pt too wide) in paragraph at lines 118--134
 [][][] 
@@ -606,7 +601,7 @@ Overfull \hbox (7.26106pt too wide) in paragraph at lines 118--134
  []
 
 
-LaTeX Warning: Float too large for page by 10.94469pt on input line 135.
+LaTeX Warning: Float too large for page by 19.07507pt on input line 135.
 
 [2] [3 </home/anupam/Desktop/backups/COL774/src/q1/sensitivity_n_estimators.png
 > </home/anupam/Desktop/backups/COL774/src/q1/sensitivity_max_features.png> </h
@@ -625,7 +620,7 @@ c file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/acc.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup_adap
 tive/acc.png  used on input line 163.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/times.png, id=123, 
 462.528pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/times.png Grap
@@ -633,7 +628,7 @@ hic file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/times.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup_adap
 tive/times.png  used on input line 166.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 
 Overfull \hbox (7.26106pt too wide) in paragraph at lines 163--167
 [][][] 
@@ -646,7 +641,7 @@ raphic file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_5.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup_adap
 tive/hidden_5.png  used on input line 172.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_10.png, id=1
 25, 462.528pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_10.png 
@@ -654,7 +649,7 @@ Graphic file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_10.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup_adap
 tive/hidden_10.png  used on input line 175.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_15.png, id=1
 26, 462.528pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_15.png 
@@ -662,7 +657,7 @@ Graphic file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_15.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup_adap
 tive/hidden_15.png  used on input line 178.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_20.png, id=1
 27, 462.528pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_20.png 
@@ -670,7 +665,7 @@ Graphic file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_20.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup_adap
 tive/hidden_20.png  used on input line 181.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_25.png, id=1
 28, 462.528pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_25.png 
@@ -678,7 +673,7 @@ Graphic file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_25.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup_adap
 tive/hidden_25.png  used on input line 184.
-(pdftex.def)             Requested size: 216.81pt x 162.60709pt.
+(pdftex.def)             Requested size: 220.42372pt x 165.31721pt.
 
 Overfull \hbox (7.26106pt too wide) in paragraph at lines 172--185
 [][][] 
@@ -690,7 +685,7 @@ Overfull \hbox (7.26106pt too wide) in paragraph at lines 172--185
  []
 
 
-LaTeX Warning: Float too large for page by 24.5447pt on input line 186.
+LaTeX Warning: Float too large for page by 32.67508pt on input line 186.
 
 [6
 
@@ -709,7 +704,7 @@ _relu.png Graphic file (type png)
 relu.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup_adap
 tive/hidden_100_100_relu.png  used on input line 198.
-(pdftex.def)             Requested size: 390.25536pt x 292.70335pt.
+(pdftex.def)             Requested size: 396.76001pt x 297.58368pt.
 </home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_100_100.png,
  id=148, 462.528pt x 346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_100_100
@@ -718,7 +713,7 @@ File: /home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_100_100
 png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/backup_adap
 tive/hidden_100_100.png  used on input line 202.
-(pdftex.def)             Requested size: 390.25536pt x 292.70335pt.
+(pdftex.def)             Requested size: 396.76001pt x 297.58368pt.
  [8
 
  </home/anupam/Desktop/backups/COL774/src/q2/backup_adaptive/hidden_100_100_rel
@@ -731,7 +726,7 @@ hic file (type png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/conf_mat_sklearn_relu.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/conf_mat_sk
 learn_relu.png  used on input line 214.
-(pdftex.def)             Requested size: 390.25536pt x 292.70335pt.
+(pdftex.def)             Requested size: 396.76001pt x 297.58368pt.
 </home/anupam/Desktop/backups/COL774/src/q2/hidden_bal.png, id=163, 462.528pt x
  346.896pt>
 File: /home/anupam/Desktop/backups/COL774/src/q2/hidden_bal.png Graphic file (t
@@ -739,12 +734,12 @@ ype png)
 <use /home/anupam/Desktop/backups/COL774/src/q2/hidden_bal.png>
 Package pdftex.def Info: /home/anupam/Desktop/backups/COL774/src/q2/hidden_bal.
 png  used on input line 227.
-(pdftex.def)             Requested size: 390.25536pt x 292.70335pt.
+(pdftex.def)             Requested size: 396.76001pt x 297.58368pt.
  [10
 
  </home/anupam/Desktop/backups/COL774/src/q2/conf_mat_sklearn_relu.png>] [11 </
 home/anupam/Desktop/backups/COL774/src/q2/hidden_bal.png>]
-Overfull \hbox (45.03839pt too wide) in paragraph at lines 235--236
+Overfull \hbox (37.81094pt too wide) in paragraph at lines 235--236
 []\T1/cmr/m/n/10.95 codingame, ``Deep Learn-ing From Scratch'', https://www.cod
 ingame.com/playgrounds/9487/deep-
  []
@@ -765,20 +760,16 @@ Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 238.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 238.
 Package rerunfilecheck Info: File `report.out' has not changed.
 (rerunfilecheck)             Checksum: 641D2247E3EE42A922ED2714EB5BF268;694.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 238.
  ) 
 Here is how much of TeX's memory you used:
  8448 strings out of 482841
  136503 string characters out of 5957101
- 394042 words of memory out of 5000000
+ 394047 words of memory out of 5000000
  23589 multiletter control sequences out of 15000+600000
  549980 words of font info for 65 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 46i,10n,47p,301b,530s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 46i,10n,47p,301b,528s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/anupam/.TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1095.600pk>
  </home/anupam/.TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1095.600pk> <
 /home/anupam/.TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1095.600pk> </h
@@ -791,9 +782,9 @@ am/.TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> </home/anupam
 inyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/anupam/.Tiny
 TeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/anupam/.TinyTeX/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on report.pdf (12 pages, 689514 bytes).
+Output written on report.pdf (12 pages, 689233 bytes).
 PDF statistics:
- 449 PDF objects out of 1000 (max. 8388607)
+ 448 PDF objects out of 1000 (max. 8388607)
  167 compressed objects within 2 object streams
  39 named destinations out of 1000 (max. 500000)
  225 words of extra memory for PDF output out of 10000 (max. 10000000)
