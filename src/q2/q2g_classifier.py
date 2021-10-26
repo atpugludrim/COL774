@@ -120,7 +120,7 @@ def train(hla,bs,lr,epoch,eps):
             feed_dict = {X:x,Y:y}
             J_val = session.run(J, feed_dict) # forward propagation
             js.append(J_val)
-            if (step == 1 or not step % 100) and i == 1:
+            if (step == 1 or not step % 1) and i == 1:
                 print("Step:",step,"loss:",J_val)# normalize by batch size
             if len(js) >= 2*ns:
                 j1 = np.mean(js[-2*ns:-ns])
@@ -128,7 +128,8 @@ def train(hla,bs,lr,epoch,eps):
                 if max(j1-j2,j2-j1) < eps:
                     converged = True
                     break
-            if J_val < 0.001:
+            if J_val < 0.01:
+                print(J_val)
                 converged = True
                 break
             session.run(minimization_op,feed_dict) # backward propagation and grad subtraction
@@ -187,7 +188,7 @@ def make_conf_mat(y_hat, y, filename):
 @timeit
 def main():
     global dl, x_test, y_test
-    df = pd.read_csv('train.csv',header=None)
+    df = pd.read_csv('train_bal.csv',header=None)
     x_train = df.iloc[:,:-10].values
     y_train = df.iloc[:,-10:].values
 
@@ -196,13 +197,13 @@ def main():
     dl.shuffle()
 
     # df = pd.read_csv('val.csv',header=None)
-    df = pd.read_csv('test.csv',header=None)
+    df = pd.read_csv('test_bal.csv',header=None)
     x_test = df.iloc[:,:-10].values
     y_test = df.iloc[:,-10:].values
 
     # hlas = [_ for _ in range(5,26,5)]
     # hlas.append(100)
-    hlas = ["100_100"]
+    hlas = ["bal"]
 
     times, acc, = [], []
     for hla in hlas:
