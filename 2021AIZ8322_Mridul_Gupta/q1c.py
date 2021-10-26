@@ -52,8 +52,12 @@ def increase_like_clockwork(ind, max_ind, idx):
 @timeitdec
 @silentdec(not True)
 def main():
+    trainp = sys.argv[1]
+    valp = sys.argv[2]
+    testp = sys.argv[3]
+    #############################################################
     # 1) HAVE TO MAKE DUMMIES
-    df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_train.csv',delimiter=';')
+    df = pd.read_csv(trainp,delimiter=';')
     xdf_train = df.iloc[:,:-1]
     xdf_train_oneh = pd.get_dummies(xdf_train)
     ts = len(df)#3000
@@ -63,7 +67,7 @@ def main():
     print("Training data loaded")
 
     # 2)
-    df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_test.csv',delimiter=';')
+    df = pd.read_csv(testp,delimiter=';')
     xdf_test = df.iloc[:,:-1]
     xdf_test_oh = pd.get_dummies(xdf_test)
     missing_cols = set(xdf_train_oh.columns) - set(xdf_test_oh.columns)
@@ -74,7 +78,7 @@ def main():
     print("Testing data loaded")
 
     # 3)
-    df = pd.read_csv('/home/anupam/Desktop/backups/COL774/data/q1/bank_val.csv',delimiter=';')
+    df = pd.read_csv(valp,delimiter=';')
     xdf_val = df.iloc[:,:-1]
     xdf_val_oh = pd.get_dummies(xdf_val)
     missing_cols = set(xdf_train_oh.columns) - set(xdf_val_oh.columns)
