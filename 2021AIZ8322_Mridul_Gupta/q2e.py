@@ -4,6 +4,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from util import *
 
+class DummyFile:
+    def write(this,s):pass
+    def flush(this,*args):pass
+
+sys.stdout = DummyFile() # silencing all outputs
+sys.stderr = DummyFile() # silencing all error outputs
 def timeit(func):
     def inner(*args):
         s = time.time()

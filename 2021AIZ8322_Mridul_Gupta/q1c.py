@@ -12,6 +12,8 @@ class DummyFile:
     def write(this, *args, **kwargs):pass
     def flush(this, *args, **kwargs):pass
 
+sys.stdout = DummyFile() # silencing all outputs
+sys.stderr = DummyFile() # silencing all error outputs
 def timeitdec(func):
     def f(*args):
         s = time.time()

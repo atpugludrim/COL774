@@ -14,6 +14,8 @@ class DummyFile:
     def write(this,s):pass
     def flush(this,*args):pass
 
+sys.stdout = DummyFile() # silencing all outputs
+sys.stderr = DummyFile() # silencing all error outputs
 class silentcontext:
     def __init__(this,silent):
         this.verbose = not silent
