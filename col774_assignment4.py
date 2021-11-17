@@ -7,169 +7,8 @@ Original file is located at
     https://colab.research.google.com/drive/1K1bgZjdCGxlpJnWmS_HGkpAetOpWqqOy
 """
 
-!pip install gdown
-
-!gdown https://drive.google.com/uc?id=1U4C_FYNNqERJ6UaJ86APOD02WV_6dKJw&export=download
-
-!gdown https://drive.google.com/uc?id=1il_UCkzpMOfUFsTo6-IDU2SUbLi0SZ2N
-
-!gdown https://drive.google.com/uc?id=1QXiu1hRzGYD7_KC_ke2aeqS2rezJPruz&export=download
-
-!unzip train_data.zip
-!unzip test_data.zip
-
-!du -h --max-depth 0 train_data
-
-!pip install --upgrade imutils
-
 # Commented out IPython magic to ensure Python compatibility.
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import cv2
-import math
-from google.colab.patches import cv2_imshow
-from imutils.object_detection import non_max_suppression
-# %matplotlib inline
-
-image = cv2.imread("train_data/res38531.jpg",0)
-cv2_imshow(image)
-
-"""Final architecture to implement**(?)**: **[Image text recognition using cnn-rnn](https://medium.com/analytics-vidhya/image-text-recognition-738a368368f5)**, another option is **[this](https://medium.com/capital-one-tech/learning-to-read-computer-vision-methods-for-extracting-text-from-images-2ffcdae11594)**
-
-- Must process data compatible to this type
-
-Refer these
-- [Text bounding box detection](https://learnopencv.com/deep-learning-based-text-detection-using-opencv-c-python/)
-> [Code](https://www.pyimagesearch.com/2018/08/20/opencv-text-detection-east-text-detector/) (github, also shows implementation for GPU)
-
-- [EAST (Efficient and Accurate Scene Text detector) model](https://github.com/spmallick/learnopencv/blob/master/TextDetectionEAST/textDetection.py)
-> [paper](https://arxiv.org/abs/1704.03155), in case we have to implement ourselves, or to add in reference
-
-- [Show and tell code](https://github.com/karpathy/neuraltalk)
-- [Papers with code - Scene text](https://paperswithcode.com/task/scene-text)
-
-References from the assignment doc:
-- [Show and tell](https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Vinyals_Show_and_Tell_2015_CVPR_paper.pdf)
-- [Pytorch Tutorials](https://pytorch.org/tutorials/)
-- Refer to the starter code provided
-- Use START and END tokens
-- Use attention to look at parts of image
-- Use Transfer Learning
-- Use Beam Search
-- [Image captioning tokenization ref](https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Image-Captioning)
-"""
-
-!wget -O EAST.tar.gz https://www.dropbox.com/s/r2ingd0l3zt8hxs/frozen_east_text_detection.tar.gz?dl=1
-
-!tar xvzf EAST.tar.gz
-
-def decode(scores,geometry,scoreThresh):
-  detections = []
-  confidences = []
-  assert len(scores.shape) == 4, "Incorrect dimensions of scores"
-  assert len(geometry.shape) == 4, "Incorrect dimensions of geometry"
-  assert scores.shape[0] == 1, "Invalid dimensions of scores"
-  assert geometry.shape[0] == 1, "Invalid dimensions of geometry"
-  assert scores.shape[1] == 1, "Invalid dimensions of scores"
-  assert geometry.shape[1] == 5, "Invalid dimensions of geometry"
-  assert scores.shape[2] == geometry.shape[2], "Invalid dimensions of scores and geometry"
-  assert scores.shape[3] == geometry.shape[3], "Invalid dimensions of scores and geometry"
-  height = scores.shape[2]
-  width = scores.shape[3]
-  for y in range(0, height):
-    scoresData = scores[0][0][y]
-    x0_data = geometry[0][0][y]
-    x1_data = geometry[0][1][y]
-    x2_data = geometry[0][2][y]
-    x3_data = geometry[0][3][y]
-    anglesData = geometry[0][4][y]
-    for x in range(0, width):
-        score = scoresData[x]
-
-        # If score is lower than threshold score, move to next x
-        if(score < scoreThresh):
-            continue
-
-        # Calculate offset
-        offsetX = x * 4.0
-        offsetY = y * 4.0
-        angle = anglesData[x]
-
-        # Calculate cos and sin of angle
-        cosA = math.cos(angle)
-        sinA = math.sin(angle)
-        h = x0_data[x] + x2_data[x]
-        w = x1_data[x] + x3_data[x]
-
-        # Calculate offset
-        offset = ([offsetX + cosA * x1_data[x] + sinA * x2_data[x], offsetY - sinA * x1_data[x] + cosA * x2_data[x]])
-
-        # Find points for rectangle
-        p1 = (-sinA * h + offset[0], -cosA * h + offset[1])
-        p3 = (-cosA * w + offset[0],  sinA * w + offset[1])
-        center = (0.5*(p1[0]+p3[0]), 0.5*(p1[1]+p3[1]))
-        detections.append((center, (w,h), -1*angle * 180.0 / math.pi))
-        confidences.append(float(score))
-
-# Return detections and confidences
-  return [detections, confidences]
-
-net = cv2.dnn.readNet('frozen_east_text_detection.pb')
-g2rgb = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-blob = cv2.dnn.blobFromImage(g2rgb,1.0,(320,320),(123.68,116.78,103.94),True,False)
-outputLayer = []
-outputLayer.append("feature_fusion/Conv_7/Sigmoid")
-outputLayer.append("feature_fusion/concat_3")
-net.setInput(blob)
-output = net.forward(outputLayer)
-scores=output[0]
-geometry=output[1]
-ct = 0.98
-nmst = 0.2
-[boxes, confidence] = decode(scores,geometry,ct)
-indices = cv2.dnn.NMSBoxesRotated(boxes, confidence, ct, nmst)
-
-print(indices)
-print(type(indices))
-print(type(boxes))
-print(len(boxes))
-print(type(boxes[0]))
-print(len(boxes[0]))
-print(type(boxes[0][0]))
-print(len(boxes[0][0]))
-print(boxes[0][0])
-print(boxes[0][1])
-print(boxes[1][0])
-print(boxes[1][1])
-
-inpWidth, inpHeight = 320,320
-height_ = image.shape[0]
-width_ = image.shape[1]
-rW = width_ / float(inpWidth)
-rH = height_ / float(inpHeight)
-for i in indices:
-    # get 4 corners of the rotated rect
-    vertices = cv2.boxPoints(boxes[i[0]])
-    # scale the bounding box coordinates based on the respective ratios
-    for j in range(4):
-        vertices[j][0] *= rW
-        vertices[j][1] *= rH
-    for j in range(4):
-        p1 = (vertices[j][0], vertices[j][1])
-        p2 = (vertices[(j + 1) % 4][0], vertices[(j + 1) % 4][1])
-        cv2.line(image, p1, p2, (255, 255, 255), 2, cv2.LINE_AA)
-        # cv.putText(frame, "{:.3f}".format(confidences[i[0]]), (vertices[0][0], vertices[0][1]), cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1, cv.LINE_AA)
-
-# Put efficiency information
-#cv2.putText(image, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
-
-# Display the frame
-cv2_imshow(image)
-
-!head Train_text.tsv
-
-"""# BASIC CNN MODEL"""
+# BASIC CNN MODEL
 
 import torch
 import torch.nn as nn
@@ -184,6 +23,44 @@ from skimage import io, transform
 import matplotlib.pyplot as plt
 import numpy as np
 
+import os
+import sys
+import datetime
+
+class blog:
+    def __init__(this):
+        if not os.path.isdir("logs"):
+            os.mkdir("logs")
+    def write(this,x):
+        this.term.write(x)
+        this.lfile.write(x)
+    def flush(this, *args, **kwargs):
+        this.term.flush(*args,**kwargs)
+        this.lfile.flush(*args,**kwargs)
+
+class olog(blog):
+    def __init__(this):
+        super().__init__()
+        this.term = sys.stdout
+        this.lfile = open("logs/log.olog","a")
+
+class elog(blog):
+    def __init__(this):
+        super().__init__()
+        this.term = sys.stderr
+        this.lfile = open("logs/log.elog","a")
+
+sys.stdout = olog()
+sys.stderr = elog()
+now = datetime.datetime.now().strftime("%H:%M:%S, %d %B %Y")
+runcom = " ".join(sys.argv)
+
+print("")
+print("",file=sys.stderr)
+print(runcom)
+print(runcom,file=sys.stderr)
+print(now,flush=True)
+print(now,file=sys.stderr,flush=True)
 class Rescale:
   def __init__(this, output_size):
     assert isinstance(output_size, (int, tuple))
@@ -207,15 +84,16 @@ class ToTensor:
     # numpy_image: H x W x C (C is color)
     # torch imagae: C x H x W
     image = image.transpose((2,0,1))
-    return image
+    return torch.FloatTensor(image)
 
 IMAGE_RESIZE = (256,256)
-img_transform = transforms.Compose([Rescale(IMAGE_RESIZE), ToTensor()])
+img_transform = transforms.Compose([Rescale(IMAGE_RESIZE), ToTensor(), transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5))])
 
 class CaptionsPreprocessing:
   """Preprocess the captions, generate vocab and convert words to tensor tokens
   """
   def __init__(this, captions_file_path):
+    this.maximum_cap_len = -float('inf')
     this.captions_file_path = captions_file_path
     this.raw_captions_dict = this.read_raw_captions()
     this.captions_dict = this.process_captions()
@@ -227,6 +105,9 @@ class CaptionsPreprocessing:
       for img_caption_line in f:
         img_captions = img_caption_line.strip().split('\t')
         captions_dict[img_captions[0]] = img_captions[1]
+        l = len(img_captions[1].strip().split())
+        if this.maximum_cap_len < l:
+            this.maximum_cap_len = l
     return captions_dict
   
   def process_captions(this):
@@ -255,7 +136,12 @@ def proc_capt_prox(this):
   raw_captions_dict = this.raw_captions_dict
   captions_dict = raw_captions_dict
   for k in captions_dict:
-    captions_dict[k] = 'xxstart '+captions_dict[k]+' xxend'
+    ck = captions_dict[k]
+    ck = ck + ' xxend'
+    while(len(ck.split()) <= this.maximum_cap_len):
+        ck = ck+' xxpad'
+    captions_dict[k] = 'xxstart ' + ck
+  this.maximum_cap_len = this.maximum_cap_len + 2
   return captions_dict
 
 def gen_vocab_proxy(this):
@@ -264,13 +150,30 @@ def gen_vocab_proxy(this):
   for k in captions_dict:
     for token in captions_dict[k].strip().split():
       words[token] = 1
-  vocab = {k: v+2 for v, k in enumerate(words)}
-  vocab['xxstart'] = 0
-  vocab['xxend'] = 1
-  return vocab
-  
+  vocab = {k: v+3 for v, k in enumerate(words)}
+  vocab['xxpad'] = 0
+  vocab['xxstart'] = 1
+  vocab['xxend'] = 2
+  vocab['xxunk'] = len(vocab.keys())
+  return vocab # vocabulary maps word to integer
+
+def capt_tra_proxy(this, image_caption):
+  vocab = this.vocab
+  max_ = len(vocab.keys())
+  curr_t = []
+  for tok in image_caption.strip().split():
+      if tok in vocab:
+          curr_t.append(vocab[tok])
+      else:
+          curr_t.append(vocab['xxunk'])
+  oh = np.zeros((len(curr_t),max_))
+  oh[np.arange(len(curr_t)),curr_t] = 1
+  capt_list = torch.FloatTensor(oh)
+  return capt_list
+
 CaptionsPreprocessing.process_captions = proc_capt_prox
 CaptionsPreprocessing.generate_vocabulary = gen_vocab_proxy
+CaptionsPreprocessing.captions_transform = capt_tra_proxy
 
 CAPTIONS_FILE_PATH = 'Train_text.tsv'
 captions_preprocessing_obj = CaptionsPreprocessing(CAPTIONS_FILE_PATH)
@@ -292,49 +195,114 @@ class ImageCaptionsDataset(Dataset):
     captions = this.captions_dict[img_name]
     if this.img_transform:
       image = this.img_transform(image)
-    if this.captios_transform:
-      captions = this.captions_tranform(captions)
+    if this.captions_transform:
+      captions = this.captions_transform(captions)
     
     sample = {'image':image,'captions':captions}
 
     return sample
 
 class ImageCaptionsNet(nn.Module):
-  def __init__(this):
+  def __init__(this,indim,hiddenconvdim,lstmindim,lstmoutdim,batch_size):
     super(ImageCaptionsNet, this).__init__()
+    this.indim = indim
+    this.hiddenconvdim = hiddenconvdim
+    this.lstmindim = lstmindim
+    this.lstmoutdim = lstmoutdim
+    this.batch_size = batch_size
     # Define architecture here
+    # Encoder
+    this.convs = nn.ModuleList()
+    this.convs.append(nn.Conv2d(indim, hiddenconvdim,(7,7)))
+    # THINK OF DECODING USING ALPHABETS INSTEAD OF WORDS
+    # THINK ABOUT GIVING FOUR ROTATE INPUTS USING TORCH AND THEN USING ATTENTION
+    this.nconvs = 3
+    # THINK OF POOLING LAYERS AND SKIP CONNECTIONS
+    for _ in range(this.nconvs-1):
+        this.convs.append(nn.Conv2d(hiddenconvdim,hiddenconvdim,(7,7)))
+    # Attention
+    this.att_in = nn.Linear(22*22,100)
+    this.att_out = nn.Linear(100,22*22)
+    # Decoder
+    # Get the output size after running the input through the cnn
+    print(lstmoutdim)
+    this.rnn = nn.LSTMCell(lstmoutdim,lstmoutdim)
+    this.init_h = nn.Linear(22*22,lstmoutdim)
+    this.init_c = nn.Linear(22*22,lstmoutdim)
   def forward(this, x):
-    x = image_batch, captions_batch # ??
+    image_batch, captions_batch = x
     # Forward propagations
-    return captions_batch
+    for i in range(this.nconvs):
+        image_batch = this.convs[i](image_batch)
+        image_batch = F.dropout(image_batch,p=0.1,training=this.training)
+        image_batch = F.relu_(image_batch)
+    image_batch = F.max_pool2d(image_batch,4,11)
+    print(image_batch.shape)
+
+    image_batch = image_batch.view(this.batch_size,this.hiddenconvdim,-1)# flatten
+    x = this.att_in(image_batch)
+    x = F.relu_(this.att_out(x))
+    x = F.softmax(x,dim=2)
+
+    mean_enc_out = (image_batch*x).mean(dim=1)
+    h = this.init_h(mean_enc_out)
+    h = h.view(this.batch_size,this.lstmoutdim)
+    c = this.init_c(mean_enc_out)
+    c = c.view(this.batch_size,this.lstmoutdim)
+    # use lstm cells and decode for every time step (for desired seq len)
+    # captions_pred, _ = this.rnn(image_batch*x,(h,c))
+    max_len = this.lstmindim
+    pred = torch.zeros(this.batch_size,max_len,this.lstmoutdim)
+    # init_input = F.one_hot(torch.tensor([1]),num_classes = this.lstmoutdim).squeeze() # 1 is the start-vector
+    init_input = torch.zeros(this.batch_size,this.lstmoutdim)
+    init_input[:,1]=1
+    for t in range(max_len):
+        (init_input,c) = this.rnn(init_input,(h,c))
+        pred[:,t,:] = init_input
+    return pred
 
 if torch.cuda.is_available():
   device = torch.device('cuda')
 else:
   device = torch.device('cpu')
-net = ImageCaptionsNet()
+net = ImageCaptionsNet(3,32,captions_preprocessing_obj.maximum_cap_len,len(captions_preprocessing_obj.vocab.keys()),64)
 net = net.to(device)
 
 IMAGE_DIR = ''
 
-train_dataset = ImageCaptionsDataset(IMAGE_DIR, captions_preprocessing_obj.captions_dict, img_transform = img_transform, captions_tranform=captions_processing_obj.captions_transform)
+train_dataset = ImageCaptionsDataset(IMAGE_DIR, captions_preprocessing_obj.captions_dict, img_transform = img_transform, captions_transform=captions_preprocessing_obj.captions_transform)
 NUMBER_OF_EPOCHS = 3
 LEARNING_RATE = 1e-1
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 NUM_WORKERS = 0 # Parallel threads for dataloading
 loss_function = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=LEARNING_RATE)
 train_loader = DataLoader(train_dataset, batch_size = BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
 
-import os
+if torch.cuda.is_available():
+    f = True
+else:
+    f = False
+with torch.autograd.profiler.profile(use_cuda=f) as prof:
+    for epoch in range(NUMBER_OF_EPOCHS):
+      for batch_idx, sample in enumerate(train_loader):
+        optimizer.zero_grad()
+        image_batch, captions_batch = sample['image'], sample['captions']
+        image_batch, captions_batch = image_batch.to(device), captions_batch.to(device)
+        output_captions = net((image_batch, captions_batch))
+        #
+        captions_ = torch.nonzero(captions_batch)
+        #############################################################
+        # 1) nll loss takes class as target not one hot vector      #
+        # 2) think about just concating all the preds because loss  #
+        #    dont care about time steps                             #
+        #############################################################
+        capt = torch.zeros(BATCH_SIZE,captions_preprocessing_obj.maximum_cap_len).long()
+        capt[captions_[:,0],captions_[:,1]]=captions_[:,2]
+        print(captions_batch.shape,output_captions.shape)
+        loss = loss_function(output_captions.transpose(1,2), capt)
+        loss.backward()
+        optimizer.step()
+      print("Iteration: ",epoch+1)
 
-for epoch in range(NUMBER_OF_EPOCHS):
-  for batch_idx, sample in enumerate(train_loader):
-    optimizer.zero_grad()
-    image_batch, captions_batch = sample['image'], sample['captions']
-    image_batch, captions_batch = image_batch.to(device), captions_batch.to(device)
-    output_captions = net((image_batch, captions_batch))
-    loss = loss_function(output_captions, captions_batch)
-    loss.backward()
-    optimizer.step()
-  print("Iteration: ",epoch+1)
+print(prof)
