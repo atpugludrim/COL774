@@ -1,0 +1,9 @@
+\BOOKMARK [1][-]{section.2}{Non-competitive part}{}% 1
+\BOOKMARK [2][-]{subsection.2.1}{Pre-processing}{section.2}% 2
+\BOOKMARK [2][-]{subsection.2.2}{CNN Encoder}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.3}{RNN Decoder}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.4}{Loss}{section.2}% 5
+\BOOKMARK [1][-]{section.3}{Competitive part}{}% 6
+\BOOKMARK [2][-]{subsection.3.1}{CNN Encoder}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.2}{RNN Decoder}{section.3}% 8
+\BOOKMARK [2][-]{subsection.3.3}{Loss}{section.3}% 9

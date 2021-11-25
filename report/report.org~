@@ -1,0 +1,61 @@
+#+TITLE: COL774 Assignment 4
+#+AUTHOR: Suchith (2021AIZ8323) and Mridul (2021AIZ8322)
+#+DATE: 
+#+OPTIONS: toc:nil
+\setcounter{section}{1}
+* Non-competitive part
+** Pre-processing
+- Building on the \texttt{starter\_code.py}, the captions were first
+  enclosed within START and END tokens, and then padded with PAD
+  tokens to make them all fixed length. Let's call this fixed length \(\ell\label{ell}\).
+- The captions were tokenized at word-level. Character-level
+  tokenization with OCR task was considered, but we didn't have the
+  right dataset to train an OCR like model.
+- After tokenization, they were converted into one-hot vectors. There
+  were 7739 tokens.
+- Images were resized to fixed size. Thresholding the images to remove
+  the background details and converting to grayscale was tried, it
+  didn't help.
+- In images, we used the EAST text detector in opencv to crop tightly
+  to the text. The results were poor.
+- Som in conclusion, the captions were tokenized, enclosed in start
+  and end markers and padded to fixed length \(\ell\) after which a vocabulary
+  mapped it to integers which was then mapped to one-hot
+  encodings. Images were resized to fixed width-height.
+** CNN Encoder
+We made a simple CNN block to extract features from images
+comprising of convolutional layers and pooling layers. Default kernel
+size and stride size were used.
+** RNN Decoder
+- The output of the CNN decoder was first fed into a linear layer to
+  create attention weights. It was then multiplied with features
+  output by encoder.
+- This was then passed into two other linear layers which would output
+  initial hidden state and cell state to be used by RNN decoder.
+- We used \texttt{torch.nn.LSTM} in biderectional mode first, 2 layers
+  deep. We soon realized a problem here: this only gave the final
+  output. So, we switched to \texttt{torch.nn.LSTMCell} that would
+  give out the hidden and cell states at each time step and it can be
+  used to run it for as many time steps as needed.
+- So, in the \texttt{torch.nn.Module.forward} method (inherited by our
+  model) we had a \texttt{for} loop running for the length of the
+  sequence which was the same as \(\ell\) (see page \pageref{ell}).
+- The hidden state at each step is seen as the unnormalized log
+  probabilities over all possible words.
+- We did teacher-forcing, just as asked for.
+** Loss
+We used negative log likelihood loss to maximize the likelihood
+of each word at each time step for each example. So,
+\begin{align*}
+P_v(x^{(i)})&=[\operatorname{softmax}(h_\theta(x^{(i)}))]_v, \; v\in V\\
+LL(\theta;x,y)&=\sum_{i\in M}\sum_{t=1}^T\sum_{v\in V} 1\{y^{(i)}_t=v\}\log{P_v(x^{(i)})}
+\end{align*}
+where with abuse of notation, \(h_\theta(x^{(i)})\) is used to mean
+the hidden state output by the rnn and time \(t\) by the RNN
+decoder. \(V\) is the set of all words, the vocabulary. \(M\)
+represents the mini-batch.\par
+The parameters of the model, both encoder and decoder are then trained
+in an end-to-end fashion using SGD optimizer.
+
+* Competitive part
+- Resnet blocks were used as feature extractor.
